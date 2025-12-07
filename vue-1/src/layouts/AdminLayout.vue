@@ -4,17 +4,24 @@ import AdminSidebar from "../components/AdminSidebar.vue";
 </script>
 
 <template>
+<div class="mool">
   <AdminSidebar></AdminSidebar>
+
   <main>
     <AdminNavbar></AdminNavbar>
     <div>
       <router-view />
     </div>
   </main>
+</div>
 </template>
 
 <style>
 body {
+  display: block !important;
+  place-items: unset !important;
+}
+.mool {
   color: #220901;
   /* background-color: var(--back-color); */
   line-height: 1.5rem;

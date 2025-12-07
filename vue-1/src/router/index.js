@@ -4,6 +4,8 @@ import AdminLayout from "../layouts/AdminLayout.vue";
 import Home from "../pages/user/Home.vue";
 import Register from "../pages/auth/Register.vue";
 import Admin from "../pages/dashboard/Admin.vue";
+import BusIndex from "../pages/admin/bus/BusIndex.vue";
+import BusAdd from "../pages/admin/bus/BusAdd.vue";
 
 
 
@@ -24,7 +26,8 @@ const routes = [
         component: AdminLayout,
         children: [
             { path: "", component: Admin },
-            
+            { path: "bus/index", name: "allbuses", component: BusIndex },
+            { path: "bus/add", name: "addbus", component: BusAdd },
             
         ]
     }

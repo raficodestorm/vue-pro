@@ -2,22 +2,41 @@
   <div class="container-fluid">
     <!-- Dashboard Stats -->
     <div class="row g-2">
-      <DashboardCard
-        title="Passenger"
-        :value="totalPassengersThisMonth + 'p'"
-        :month="currentMonth"
-      />
-      <DashboardCard
-        title="Sale"
-        :value="totalAmountThisMonth + ' Tk'"
-        :month="currentMonth"
-      />
-      <DashboardCard
-        title="Completed Trips"
-        :value="totalTripsThisMonth"
-        :month="currentMonth"
-      />
-      <DashboardCard title="Cost" value="9500tk" :month="currentMonth" />
+      <div class="col-md-3 p-2">
+      <div class="hello p-2">
+        <h5>Passenger</h5>
+        <h2>3005p</h2>
+        <p>in Fabruary</p>
+        <div class="style-hello"></div>
+      </div>
+    </div>
+
+    <div class="col-md-3 p-2">
+      <div class="hello p-2">
+        <h5>Sale</h5>
+        <h2>20500 Tk</h2>
+        <p>in Fabruary</p>
+        <div class="style-hello"></div>
+      </div>
+    </div>
+
+    <div class="col-md-3 p-2">
+      <div class="hello p-2">
+        <h5>Completed Trips</h5>
+        <h2>500</h2>
+        <p>in Fabruary</p>
+        <div class="style-hello"></div>
+      </div>
+    </div>
+
+    <div class="col-md-3 p-2">
+      <div class="hello p-2">
+        <h5>Cost</h5>
+        <h2>3500tk</h2>
+        <p>in Fabruary</p>
+        <div class="style-hello"></div>
+      </div>
+    </div>
     </div>
 
     <!-- Charts & Top 5 Branches -->
@@ -312,5 +331,129 @@ onMounted(() => {
   position: absolute;
   height: 300px;
   width: 95%;
+}
+
+.index-card{
+  border: .5px solid var(--main-color);
+  border-radius: 1rem;
+  padding: 1rem;
+  background-color: var(--bg-color);
+}
+/* ------------------------------
+   Table Styling
+------------------------------ */
+#table-same {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Table Header */
+#table-same thead th {
+  background-color: #ff0000;
+  color: #fff;
+  text-align: center;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  padding: 12px 10px;
+}
+
+/* Table Body */
+#table-same tbody td,
+#table-same tbody th {
+  text-align: center;
+  vertical-align: middle;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+  color: #444;
+}
+
+/* Hover Row Effect */
+#table-same tbody tr:hover {
+  background-color: #f6f6e1;
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* Empty State */
+#table-same td.text-muted {
+  color: #999;
+  font-style: italic;
+}
+
+/* ------------------------------
+   Buttons
+------------------------------ */
+/* .btn{
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 6px 14px;
+  color: white;
+  transition: all 0.2s ease-in-out;
+} */
+
+.btn-success {
+  background-color: #780116;
+  border-color: #780116;
+}
+
+.btn-success:hover {
+  background-color: #ff0000;
+  border-color: #ff0000;
+}
+
+.btn-info {
+  background-color: #ff0000;
+  border: none;
+  color: #fff;
+}
+
+.btn-info:hover {
+  background-color: #cc0000;
+}
+
+.btn-warning {
+  background-color: #ffb300;
+  border: none;
+  color: #fff;
+}
+
+.btn-warning:hover {
+  background-color: #ff9500;
+}
+
+.btn-danger {
+  background-color: #780116;
+  border: none;
+}
+
+.btn-danger:hover {
+  background-color: #ff0000;
+}
+
+/* ------------------------------
+   Table Title & Header Row
+------------------------------ */
+h2.text-center {
+  font-weight: 700;
+  color: #780116;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* ------------------------------
+   Alert Message
+------------------------------ */
+.alert-success {
+  background-color: #d1f7d1;
+  border: 1px solid #9be79b;
+  color: #217a21;
+  font-weight: 500;
+  border-radius: 10px;
+  text-align: center;
 }
 </style>

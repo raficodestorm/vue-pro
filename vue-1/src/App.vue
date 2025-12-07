@@ -14,6 +14,7 @@ import LoginModal from "./components/LoginModal.vue";
 #app {
   max-width: 100%;
   padding: 0;
+  text-align: start;
 }
 body {
   padding: 0;

@@ -65,7 +65,7 @@
               <li v-for="sub in item.submenu" :key="sub.title">
                 <RouterLink :to="sub.route" :title="sub.title">
                   <img :src="getIcon(sub.icon)" />
-                  <span>{{ sub.title }}</span>
+                  <span class="mentext">{{ sub.title }}</span>
                 </RouterLink>
               </li>
             </div>
@@ -88,7 +88,7 @@ const toggleSidebar = () => {
 
 /* Load SVG Icons (Vite Safe) */
 const getIcon = (name) => {
-  return new URL(`../svg/${name}.svg`, import.meta.url).href;
+  return `/svg/${name}.svg`;
 };
 
 /* Sidebar Menu Items */
@@ -109,8 +109,8 @@ const menuItems = ref([
     title: "Buses",
     icon: "bus",
     submenu: [
-      { title: "Add New Bus", icon: "addbus", route: "/admin" },
-      { title: "All Buses", icon: "list", route: "/admin" },
+      { title: "Add New Bus", icon: "addbus", route: "/admin/bus/add" },
+      { title: "All Buses", icon: "list", route: "/admin/bus/index" },
     ],
     showSubmenu: false,
   },
@@ -402,7 +402,9 @@ i {
   .sidebar #drop svg:last-child {
     display: none;
   }
-
+  span{
+    text-align: start !important;
+  }
   .sidebar ul li {
     height: 60px;
     width: 60px; /* fixed */
