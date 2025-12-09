@@ -99,7 +99,7 @@ const menuItems = ref([
     title: "Bus type",
     icon: "addbus",
     submenu: [
-      { title: "Add Bustype", icon: "bus", route: "/admin" },
+      { title: "Add Bustype", icon: "bus", route: "/admin/bustype/add" },
       { title: "All Bustypes", icon: "list", route: "/admin" },
     ],
     showSubmenu: false,
