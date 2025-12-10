@@ -1,18 +1,20 @@
 <script setup>
     import { ref } from "vue";
-    import axios from "axios";
+    import axios from '../../../api/axios.js';
     import { useRouter } from "vue-router";
     
     const type = ref("");
     const loading = ref(false);
     const message = ref("");
+    const errors = ref({});
+
     
     const saveType = async () => {
         loading.value = true;
       message.value = "";
     
       try {
-        const response = await axios.post("http://127.0.0.1:8000/api/bustypes", {
+        const response = await axios.post("/bustypes", {
           type: type.value,
         });
     
@@ -33,10 +35,10 @@
     <template>
       <div class="bus-container">
         <!-- Status Message -->
-        <div v-if="message" class="alert" 
-                 :class="message.includes('success') ? 'alert-success' : 'alert-danger'">
-              {{ message }}
-            </div>
+        <small v-if="errors?.type" class="text-danger fw-semibold">
+          {{ errors.type[0] }}
+        </small>
+
     
         <!-- Header Section -->
         <div class="header-bar">

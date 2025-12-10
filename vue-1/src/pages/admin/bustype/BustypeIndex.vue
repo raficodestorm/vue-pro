@@ -1,6 +1,6 @@
 <script setup>
     import { ref, onMounted } from "vue";
-    import axios from "axios";
+    import axios from '../../../api/axios.js';
     import { useRouter } from "vue-router";
     
     const router = useRouter();
@@ -12,7 +12,9 @@
       try {
         const res = await axios.get("/bustypes");
         types.value = res.data.types;
-      } finally {
+      } catch (error) {
+        console.error("Failed to load bustypes", error);
+      }finally {
         loading.value = false;
       }
     };
@@ -60,16 +62,6 @@
     
                 <td>
                   <div class="action-btns">
-    
-                    <router-link
-                      :to="{
-                        name: 'bustype.edit',
-                        params: { id: type.id }
-                      }"
-                      class="edit-btn"
-                    >
-                      Edit
-                    </router-link>
     
                     <button @click="deleteType(type.id)" class="delete-btn">
                       Delete
