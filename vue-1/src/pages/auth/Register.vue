@@ -1,132 +1,136 @@
-<template>
-  <div class="register-form-card">
-    <h2 class="text-center">Join With Runstar</h2>
-    <p class="lead text-center">
-      Create your account to start using the dashboard
-    </p>
-
-    <form
-      class="form-regi"
-      @submit.prevent="submitForm"
-      enctype="multipart/form-data"
-    >
-      <!-- Fullname -->
-      <div class="field">
-        <label>Fullname</label>
-        <input v-model="form.fullname" required />
-        <div class="error" v-if="errors.fullname">{{ errors.fullname }}</div>
-      </div>
-
-      <!-- Username -->
-      <div class="field">
-        <label>Username</label>
-        <input v-model="form.username" required />
-        <div class="error" v-if="errors.username">{{ errors.username }}</div>
-      </div>
-
-      <!-- Email -->
-      <div class="field">
-        <label>Email</label>
-        <input type="email" v-model="form.email" required />
-        <div class="error" v-if="errors.email">{{ errors.email }}</div>
-      </div>
-
-      <!-- Password -->
-      <div class="field">
-        <label>Password</label>
-        <input type="password" v-model="form.password" required />
-        <div class="error" v-if="errors.password">{{ errors.password }}</div>
-      </div>
-
-      <!-- Confirm Password -->
-      <div class="field">
-        <label>Confirm Password</label>
-        <input type="password" v-model="form.password_confirmation" required />
-      </div>
-
-      <!-- Phone -->
-      <div class="field">
-        <label>Phone</label>
-        <input v-model="form.phone" />
-      </div>
-
-      <!-- Address -->
-      <div class="field">
-        <label>Address</label>
-        <textarea v-model="form.address"></textarea>
-      </div>
-
-      <!-- Profile Picture -->
-      <div class="field">
-        <label>Profile Picture</label>
-        <input type="file" @change="handleFile" accept="image/*" />
-      </div>
-
-      <button type="submit" class="btn btn-primary">Create Account</button>
-
-      <div class="meta">
-        Already have an account?
-        <router-link to="/login">Sign in</router-link>
-      </div>
-    </form>
-  </div>
-</template>
-
 <script setup>
-import { reactive } from "vue";
-import axios from "axios";
-import { useRouter } from "vue-router";
-
-const router = useRouter();
-
-// Form state
-const form = reactive({
-  fullname: "",
-  username: "",
-  email: "",
-  password: "",
-  password_confirmation: "",
-  phone: "",
-  address: "",
-  profile_photo: null,
-});
-
-// Validation errors
-const errors = reactive({});
-
-// Handle file upload
-function handleFile(event) {
-  form.profile_photo = event.target.files[0];
-}
-
-// Submit form
-async function submitForm() {
-  const formData = new FormData();
-  Object.keys(form).forEach((key) => {
-    formData.append(key, form[key]);
+  import { reactive, ref } from "vue";
+  import axios from "../../api/axios.js";
+  import { useRouter } from "vue-router";
+  
+  const router = useRouter();
+  const loading = ref(false);
+  const errors = reactive({});
+  
+  // Form data
+  const form = reactive({
+    fullname: "",
+    username: "",
+    email: "",
+    password: "",
+    password_confirmation: "",
+    phone: "",
+    address: "",
+    profile_photo: null,
   });
-
-  // Reset errors
-  Object.keys(errors).forEach((key) => (errors[key] = null));
-
-  try {
-    const res = await axios.post("http://localhost:8000/register", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
+  
+  // Handle file upload
+  function handleFile(event) {
+    form.profile_photo = event.target.files[0];
+  }
+  
+  // Submit Form
+  async function submitForm() {
+    loading.value = true;
+  
+    // Reset old errors
+    Object.keys(errors).forEach((key) => (errors[key] = null));
+  
+    const formData = new FormData();
+    Object.keys(form).forEach((key) => {
+      formData.append(key, form[key]);
     });
-
-    // Successful registration
-    alert("Account created successfully!");
-    router.push("/login"); // redirect to login page
-  } catch (err) {
-    if (err.response?.status === 422) {
-      // Validation errors from backend
-      Object.assign(errors, err.response.data.errors);
-    } else {
-      alert(err.response?.data?.message || "Something went wrong!");
+  
+    try {
+      const res = await axios.post("/register", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+  
+      alert("Account created successfully!");
+      router.push("/");
+  
+    } catch (err) {
+      if (err.response?.status === 422) {
+        Object.assign(errors, err.response.data.errors);
+      } else {
+        alert(err.response?.data?.message || "Registration failed!");
+      }
+    } finally {
+      loading.value = false;
     }
   }
-}
-</script>
+  </script>
+  
+  <template>
+    <div class="register-form-card">
+  
+      <h2 class="text-center">Join With Runstar</h2>
+      <p class="lead text-center">Create your account to start using the dashboard</p>
+  
+      <form class="form-regi" @submit.prevent="submitForm" enctype="multipart/form-data">
+  
+        <!-- Fullname -->
+        <div class="field">
+          <label>Fullname</label>
+          <input v-model="form.fullname" required />
+          <div class="error" v-if="errors.fullname">{{ errors.fullname[0] }}</div>
+        </div>
+  
+        <!-- Username -->
+        <div class="field">
+          <label>Username</label>
+          <input v-model="form.username" required />
+          <div class="error" v-if="errors.username">{{ errors.username[0] }}</div>
+        </div>
+  
+        <!-- Email -->
+        <div class="field">
+          <label>Email</label>
+          <input type="email" v-model="form.email" required />
+          <div class="error" v-if="errors.email">{{ errors.email[0] }}</div>
+        </div>
+  
+        <!-- Password -->
+        <div class="field">
+          <label>Password</label>
+          <input type="password" v-model="form.password" required />
+          <div class="error" v-if="errors.password">{{ errors.password[0] }}</div>
+        </div>
+  
+        <!-- Confirm Password -->
+        <div class="field">
+          <label>Confirm Password</label>
+          <input type="password" v-model="form.password_confirmation" required />
+        </div>
+  
+        <!-- Phone -->
+        <div class="field">
+          <label>Phone</label>
+          <input v-model="form.phone" />
+        </div>
+  
+        <!-- Address -->
+        <div class="field">
+          <label>Address</label>
+          <textarea v-model="form.address"></textarea>
+        </div>
+  
+        <!-- Profile Photo -->
+        <div class="field">
+          <label>Profile Picture</label>
+          <input type="file" @change="handleFile" accept="image/*" />
+        </div>
+  
+        <button type="submit" class="btn btn-primary" :disabled="loading">
+          {{ loading ? "Processing..." : "Create Account" }}
+        </button>
+  
+        <div class="meta">
+          Already have an account?
+          <router-link to="/login">Sign in</router-link>
+        </div>
+      </form>
+  
+    </div>
+  </template>
+  
 
 <style scoped>
 /* Define Global Styles for the Container (Assuming this component sits alone on a page) */

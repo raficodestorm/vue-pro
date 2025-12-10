@@ -44,8 +44,8 @@
         <div class="header-bar">
           <h2>Create Bus Type</h2>
     
-          <router-link to="/admin/bustypes" class="back-btn">
-            Back
+          <router-link to="/admin/bustype/index" class="back-btn">
+            All Bustypes
           </router-link>
         </div>
     
@@ -68,7 +68,8 @@
               </small>
             </div>
     
-            <button class="submit-btn">Save</button>
+            <button class="submit-btn" :disabled="loading">
+              {{ loading ? "Saving..." : "Save"}}</button>
           </form>
     
         </div>

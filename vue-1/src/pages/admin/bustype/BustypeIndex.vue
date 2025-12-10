@@ -37,15 +37,20 @@
         <div class="header-bar">
           <h2>Bus Type List</h2>
     
-          <router-link to="/admin/bustypes/create" class="add-btn">
+          <router-link to="/admin/bustype/add" class="add-btn">
             + Add New
           </router-link>
         </div>
     
         <!-- Table Card -->
         <div class="card-box shadow">
+          <!-- Loading -->
+          <div v-if="loading" class="text-center py-3">
+              <div class="spinner-border"></div>
+              <p>Loading types...</p>
+            </div>
     
-          <table class="table table-bordered table-hover align-middle custom-table">
+          <table v-else class="table table-bordered table-hover align-middle custom-table">
     
             <thead>
               <tr>
@@ -55,7 +60,7 @@
               </tr>
             </thead>
     
-            <tbody v-if="!loading">
+            <tbody>
               <tr v-for="(type, index) in types" :key="type.id">
                 <td>{{ index + 1 }}</td>
                 <td class="fw-semibold">{{ type.type }}</td>
@@ -70,10 +75,9 @@
                   </div>
                 </td>
               </tr>
-            </tbody>
-    
-            <tbody v-else>
-              <tr><td colspan="3" class="text-center py-3">Loading...</td></tr>
+              <tr v-if="types.length === 0">
+                <td colspan="6" class="text-center">No types found</td>
+              </tr>
             </tbody>
     
           </table>

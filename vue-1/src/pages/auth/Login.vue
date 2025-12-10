@@ -98,87 +98,104 @@
 </template>
 
 <script setup>
-import { reactive, ref } from "vue";
-import axios from "../../api/axios";
-import { useRouter } from "vue-router";
-
-const router = useRouter();
-
-const loading = ref(false);
-const showPassword = ref(false);
-const generalError = ref(null);
-
-const form = reactive({
-  login: "",
-  password: "",
-  remember: false,
-});
-
-const errors = reactive({
-  login: null,
-  password: null,
-});
-
-function togglePassword() {
-  showPassword.value = !showPassword.value;
-}
-
-async function submitLogin() {
-  loading.value = true;
-  // Reset errors
-  errors.login = null;
-  errors.password = null;
-  generalError.value = null;
-
-  try {
-    // 1. Check for basic client-side validation first (optional but recommended)
-    if (!form.login || !form.password) {
-      generalError.value = "Please fill in all fields.";
-      loading.value = false;
-      return;
-    }
-
-    // 2. Make API Call
-    const res = await axios.post("/login", form);
-
-    // 3. IMPORTANT: Store the Token!
-    // (Adjust 'token' to match your API response key, e.g., access_token)
-    if (res.data.token) {
-      localStorage.setItem("auth_token", res.data.token);
-
-      // If you are using Pinia/Vuex, dispatch the action here instead:
-      // userStore.setToken(res.data.token);
-    }
-
-    // 4. Redirect based on role
-    const role = res.data.role || "user"; // Fallback
-
-    if (role === "admin") await router.push("/admin/dashboard");
-    else if (role === "manager") await router.push("/manager/dashboard");
-    else await router.push("/user/dashboard");
-  } catch (err) {
-    console.error(err);
-
-    // Handle Validation Errors (422)
-    if (err.response?.status === 422 && err.response?.data?.errors) {
-      Object.assign(errors, err.response.data.errors);
-    }
-    // Handle Bad Credentials (401)
-    else if (err.response?.status === 401) {
-      generalError.value = "Invalid username or password.";
-    }
-    // Handle Server Errors
-    else {
-      generalError.value =
-        err.response?.data?.message ||
-        "Something went wrong. Please try again.";
-    }
-  } finally {
-    loading.value = false;
+  import { reactive, ref } from "vue";
+  import axios from "../../api/axios";
+  import { useRouter } from "vue-router";
+  
+  const router = useRouter();
+  
+  const loading = ref(false);
+  const showPassword = ref(false);
+  const generalError = ref(null);
+  
+  const form = reactive({
+    username: "", // changed from "login" to "username"
+    password: "",
+    remember: false,
+  });
+  
+  const errors = reactive({
+    username: null,
+    password: null,
+  });
+  
+  function togglePassword() {
+    showPassword.value = !showPassword.value;
   }
-}
-</script>
-
+  
+  async function submitLogin() {
+    loading.value = true;
+  
+    errors.username = null;
+    errors.password = null;
+    generalError.value = null;
+  
+    try {
+      if (!form.username || !form.password) {
+        generalError.value = "Please fill in all fields.";
+        loading.value = false;
+        return;
+      }
+  
+      // Laravel POST /api/login
+      const res = await axios.post("/login", {
+        username: form.username,
+        password: form.password,
+      });
+  
+      // Save returned user + role
+      const user = res.data.user;
+      const role = res.data.role;
+  
+      // Store for session
+      localStorage.setItem("user", JSON.stringify(user));
+      localLocalIgnore("role", role);
+  
+      // Optional: If in future you add token, store it
+      if (res.data.token) {
+        localStorage.setItem("auth_token", res.data.token);
+      }
+  
+      // Redirect by role
+      switch (role) {
+        case "admin":
+          router.push("/admin");
+          break;
+  
+        case "controller":
+          router.push("/controller/dashboard");
+          break;
+  
+        case "manager":
+          router.push("/manager/dashboard");
+          break;
+  
+        default:
+          router.push("/user/dashboard");
+      }
+    } catch (err) {
+      console.error(err);
+  
+      // Validation errors
+      if (err.response?.status === 422 && err.response?.data?.errors) {
+        Object.assign(errors, err.response.data.errors);
+      }
+      // Invalid credentials
+      else if (err.response?.status === 401) {
+        generalError.value = "Invalid username or password.";
+      }
+      // Other errors
+      else {
+        generalError.value =
+          err.response?.data?.message ||
+          "Something went wrong. Please try again.";
+      }
+    } finally {
+      loading.value = false;
+    }
+  }
+  </script>
+  
 <style scoped>
 /* ASSUMPTION: You have the following variables in your global CSS:
    --main-color, --second-color, --muted, --radius-lg, --card-shadow
