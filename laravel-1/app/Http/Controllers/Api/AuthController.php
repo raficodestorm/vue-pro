@@ -39,22 +39,35 @@ class AuthController extends Controller
             'role' => 'user',
         ]);
 
-        return response()->json(['user'=>$user],201);
+        return response()->json(['user' => $user], 201);
     }
 
     public function login(Request $request)
     {
         $request->validate([
-            'username'=>'required|string',
-            'password'=>'required|string',
+            'username' => 'required|string',
+            'password' => 'required|string',
         ]);
 
-        $user = User::where('username',$request->username)->first();
+        $user = User::where('username', $request->username)
+            ->orWhere('email', $request->username)
+            ->first();
 
-        if(!$user || !Hash::check($request->password, $user->password)){
-            return response()->json(['message'=>'Invalid credentials'],401);
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return response()->json([
+                'message' => 'Invalid credentials'
+            ], 401);
         }
 
-        return response()->json(['user'=>$user,'role'=>$user->role]);
+        // Delete old tokens (optional but clean)
+        $user->tokens()->delete();
+
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'user'  => $user,
+            'role'  => $user->role,
+            'token' => $token,
+        ], 200);
     }
 }

@@ -9,20 +9,21 @@ const router = useRouter();
 const user = ref(null);
 
 onMounted(async () => {
-  try {
-    const res = await axios.get("/api/user");
-    user.value = res.data;
-  } catch (e) {
-    user.value = null;
-  }
+  // try {
+  //   const res = await axios.get("/");
+  //   user.value = res.data;
+  // } catch (e) {
+  //   user.value = null;
+  // }
 });
 
 // ========== Logout ==========
 const logout = async () => {
-  await axios.post("/logout");
-  user.value = null;
-  router.push("/login");
+  await api.post("/logout");
+  localStorage.clear();
+  router.push("/");
 };
+
 
 // ========== Login Modal ==========
 const openLogin = () => {

@@ -1,98 +1,121 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Route;
 use Illuminate\Http\Request;
-use App\Models\Location;
+use App\Models\Route as RouteModel; // ✅ alias to avoid conflict
 
 class RouteController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display all routes (with pagination).
      */
-    public function index()
+    public function index(Request $request)
     {
-        $routes = Route::paginate(10);
-        return view('pages.admin.route.index', compact('routes'));
+        $perPage = $request->get('per_page', 10);
+
+        $routes = RouteModel::orderBy('route_code', 'asc')
+            ->paginate($perPage);
+
+        return response()->json([
+            'status' => 200,
+            'data' => $routes,
+        ]);
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        $locations = Location::orderBy('district', 'asc')->get();
-        return view('pages.admin.route.create', compact('locations'));
-    }
-
-    /**
-     * Store a newly created resource in storage.
+     * Store a newly created route.
      */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'route_code' => 'required|string|max:100',
+            'route_code'     => 'required|string|max:100',
             'start_location' => 'required|string|max:100',
-            'end_location' => 'required|string|max:100',
-            'distance' => 'nullable|string|max:50',
-            'duration' => 'nullable|string|max:50',
+            'end_location'   => 'required|string|max:100',
+            'distance'       => 'nullable|string|max:50',
+            'duration'       => 'nullable|string|max:50',
         ]);
 
-        Route::create($validated);
-        return redirect()->route('admin.routes.index')->with('success', 'Route added successfully!');
+        $route = RouteModel::create($validated);
+
+        return response()->json([
+            'status'  => 201,
+            'message' => 'Route added successfully',
+            'data'    => $route,
+        ], 201);
     }
 
     /**
-     * Display the specified resource.
+     * Display a single route.
      */
-    public function show(Route $route)
+    public function show($id)
     {
-        return view('pages.admin.route.show', compact('route'));
+        $route = RouteModel::find($id);
+
+        if (!$route) {
+            return response()->json([
+                'status'  => 404,
+                'message' => 'Route not found',
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 200,
+            'data'   => $route,
+        ]);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Update a route.
      */
-    public function edit(Route $route)
+    public function update(Request $request, $id)
     {
-        $locations = Location::orderBy('district', 'asc')->get();
-        return view('pages.admin.route.edit', compact('route', 'locations'));
-    }
+        $route = RouteModel::find($id);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Route $route)
-    {
+        if (!$route) {
+            return response()->json([
+                'status'  => 404,
+                'message' => 'Route not found',
+            ], 404);
+        }
+
         $validated = $request->validate([
-            'route_code' => 'required|string|max:100',
+            'route_code'     => 'required|string|max:100',
             'start_location' => 'required|string|max:100',
-            'end_location' => 'required|string|max:100',
-            'distance' => 'nullable|string|max:50',
-            'duration' => 'nullable|string|max:50',
+            'end_location'   => 'required|string|max:100',
+            'distance'       => 'nullable|string|max:50',
+            'duration'       => 'nullable|string|max:50',
         ]);
 
         $route->update($validated);
-        return redirect()->route('admin.routes.index')->with('success', 'Route updated successfully');
+
+        return response()->json([
+            'status'  => 200,
+            'message' => 'Route updated successfully',
+            'data'    => $route,
+        ]);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Delete a route.
      */
-    public function destroy(Route $route)
+    public function destroy($id)
     {
+        $route = RouteModel::find($id);
+
+        if (!$route) {
+            return response()->json([
+                'status'  => 404,
+                'message' => 'Route not found',
+            ], 404);
+        }
+
         $route->delete();
-        return redirect()->route('admin.routes.index')->with('success', 'Route deleted successfully!');
+
+        return response()->json([
+            'status'  => 200,
+            'message' => 'Route deleted successfully',
+        ]);
     }
-
-    // public function getLocationss(Request $request)
-    // {
-    //     $search = $request->get('q'); // 'q' মানে query string থেকে পাঠানো টেক্সট
-    //     $locationss = Location::where('district', 'LIKE', "%{$search}%")
-    //         ->pluck('district');
-
-    //     return response()->json($locationss);
-    // }
 }

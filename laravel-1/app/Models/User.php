@@ -6,10 +6,11 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, Notifiable;
+    use HasFactory, HasApiTokens, Notifiable;
 
     protected $fillable = [
         'fullname',
@@ -37,25 +38,25 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     // helper
-    public function isAdmin(): bool
-    {
-        return $this->role === 'admin';
-    }
+    // public function isAdmin(): bool
+    // {
+    //     return $this->role === 'admin';
+    // }
 
-    public function isManager(): bool
-    {
-        return $this->role === 'counter_manager';
-    }
+    // public function isManager(): bool
+    // {
+    //     return $this->role === 'counter_manager';
+    // }
 
-    public function isController(): bool
-    {
-        return $this->role === 'controller';
-    }
+    // public function isController(): bool
+    // {
+    //     return $this->role === 'controller';
+    // }
 
-    public function isUser(): bool
-    {
-        return $this->role === 'user';
-    }
+    // public function isUser(): bool
+    // {
+    //     return $this->role === 'user';
+    // }
 
     public function counter()
     {

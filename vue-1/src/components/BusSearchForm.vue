@@ -88,7 +88,6 @@ function submitForm() {
 </template>
 
 <style scoped>
-/* তোমার ফর্ম সম্পর্কিত CSS এখানে রাখলাম */
 .card {
   background-color: #fffffc75;
 }

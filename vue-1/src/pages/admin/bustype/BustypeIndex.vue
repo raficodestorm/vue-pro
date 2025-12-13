@@ -10,7 +10,7 @@
     // Fetch all bustypes
     const fetchTypes = async () => {
       try {
-        const res = await axios.get("/bustypes");
+        const res = await axios.get("/admin/bustypes");
         types.value = res.data.types;
       } catch (error) {
         console.error("Failed to load bustypes", error);
@@ -23,7 +23,7 @@
     const deleteType = async (id) => {
       if (!confirm("Are you sure you want to delete this type?")) return;
     
-      await axios.delete(`/bustypes/${id}`);
+      await axios.delete(`/admin/bustypes/${id}`);
       fetchTypes();
     };
     

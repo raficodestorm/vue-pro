@@ -162,8 +162,8 @@ const menuItems = ref([
     title: "location",
     icon: "location",
     submenu: [
-      { title: "Add location", icon: "addlocation", route: "/admin" },
-      { title: "All locations", icon: "list", route: "/admin" },
+      { title: "Add location", icon: "addlocation", route: "/admin/location/add" },
+      { title: "All locations", icon: "list", route: "/admin/location/index" },
     ],
     showSubmenu: false,
   },
@@ -172,8 +172,8 @@ const menuItems = ref([
     title: "Route",
     icon: "route",
     submenu: [
-      { title: "Add Route", icon: "addroute", route: "/admin" },
-      { title: "All Routes", icon: "list", route: "/admin" },
+      { title: "Add Route", icon: "addroute", route: "/admin/route/add" },
+      { title: "All Routes", icon: "list", route: "/admin/route/index" },
     ],
     showSubmenu: false,
   },

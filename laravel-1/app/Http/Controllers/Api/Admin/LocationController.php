@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Location;
@@ -9,74 +9,87 @@ use Illuminate\Http\Request;
 class LocationController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of all locations.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $locations = Location::orderBy('id', 'asc')->paginate(10);
-        return view('pages.admin.location.index', compact('locations'));
+        $perPage = $request->get('per_page', 10);
+        $locations = Location::orderBy('district', 'asc')->paginate($perPage);
+
+        return response()->json([
+            'status' => 200,
+            'data' => $locations,
+        ]);
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('pages.admin.location.create');
-    }
-
-    /**
-     * Store a newly created resource in storage.
+     * Store a new location.
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'district' => 'required|string|max:100|unique:locations,district',
             'division' => 'nullable|string|max:100',
         ]);
 
-        Location::create($request->only('district', 'division'));
+        $location = Location::create($validated);
 
-        return redirect()->route('locations.index')->with('success', 'Location added successfully!');
+        return response()->json([
+            'status' => 201,
+            'message' => 'Location added successfully!',
+            'data' => $location,
+        ], 201);
     }
 
     /**
-     * Display the specified resource.
+     * Show a single location.
      */
-    public function show(Location $location)
+    public function show($id)
     {
-        return view('pages.admin.location.show', compact('location'));
+        $location = Location::find($id);
+        return response()->json([
+            'status' => 200,
+            'data' => $location,
+        ]);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Update an existing location.
      */
-    public function edit(Location $location)
+    public function update(Request $request, $id)
     {
-        return view('pages.admin.location.edit', compact('location'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Location $location)
-    {
-        $request->validate([
-            'district' => 'required|string|max:100|unique:locations,district',
+        $location = Location::find($id);
+        $validated = $request->validate([
+            'district' => 'required|string|max:100|unique:locations,district,' . $location->id,
             'division' => 'nullable|string|max:100',
         ]);
 
-        $location->update($request->only('district', 'division'));
+        $location->update($validated);
 
-        return redirect()->route('locations.index')->with('success', 'Location updated successfully!');
+        return response()->json([
+            'status' => 200,
+            'message' => 'Location updated successfully!',
+            'data' => $location,
+        ]);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Delete a location.
      */
-    public function destroy(Location $location)
+    public function destroy($id)
     {
+        $location = Location::find($id);
+        if (!$location) {
+            return response()->json([
+                'status'  => 404,
+                'message' => 'Location not found',
+            ], 404);
+        }
         $location->delete();
-        return redirect()->route('locations.index')->with('success', 'Location deleted successfully!');
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Location deleted successfully!',
+        ]);
     }
 }

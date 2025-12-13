@@ -14,6 +14,11 @@ import BusIndex from "../pages/admin/bus/BusIndex.vue";
 import BusAdd from "../pages/admin/bus/BusAdd.vue";
 import BustypeAdd from "../pages/admin/bustype/BustypeAdd.vue";
 import BustypeIndex from "../pages/admin/bustype/BustypeIndex.vue";
+import RouteAdd from "../pages/admin/route/RouteAdd.vue";
+import RouteIndex from "../pages/admin/route/RouteIndex.vue";
+import RouteEdit from "../pages/admin/route/RouteEdit.vue";
+import LocationIndex from "../pages/admin/location/LocationIndex.vue";
+import LocationAdd from "../pages/admin/location/LocationAdd.vue";
 
 // ===================================
 // ROUTES
@@ -37,6 +42,13 @@ const routes = [
       { path: "bus/add", name: "addbus", component: BusAdd },
       { path: "bustype/add", name: "addbustype", component: BustypeAdd },
       { path: "bustype/index", name: "allbustype", component: BustypeIndex },
+
+      { path: "route/add", name: "addroute", component: RouteAdd },
+      { path: "route/index", name: "allroute", component: RouteIndex },
+      { path: "route/edit/:id", name: "editroute", component: RouteEdit },
+
+      { path: "location/index", name: "alllocation", component: LocationIndex },
+      { path: "location/add", name: "addlocation", component: LocationAdd }
     ],
   },
 ];
@@ -54,22 +66,24 @@ const router = createRouter({
 // ===================================
 router.beforeEach((to, from, next) => {
   const role = localStorage.getItem("role");
+  const token = localStorage.getItem("auth_token");
 
-  // Public Routes
-  if (to.path === "/" || to.path === "/register") {
-    return next();
-  }
+  const publicRoutes = ["/", "/register", "/login"];
 
-  // Not logged in → redirect to home
-  if (!role) return next("/");
+  // Public routes
+  if (publicRoutes.includes(to.path)) return next();
 
-  // Role protections
+  // Not logged in
+  if (!token) return next("/");
+
+  // Role restrictions
   if (to.path.startsWith("/admin") && role !== "admin") return next("/");
   if (to.path.startsWith("/controller") && role !== "controller") return next("/");
-  if (to.path.startsWith("/counter_manager") && role !== "counter_manager") return next("/");
+  if (to.path.startsWith("/manager") && role !== "manager") return next("/");
   if (to.path.startsWith("/user") && role !== "user") return next("/");
 
   next();
 });
+
 
 export default router;

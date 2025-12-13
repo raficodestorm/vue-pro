@@ -59,7 +59,7 @@ class BusController extends Controller
     {
         $types = Bustype::get();
         $routes = Route::orderBy('route_code', 'asc')->get();
-        return view('pages.admin.bus.edit', compact('bus', 'types','routes'));
+        return view('pages.admin.bus.edit', compact('bus', 'types', 'routes'));
     }
 
     /**

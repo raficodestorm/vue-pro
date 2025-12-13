@@ -1,45 +1,33 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Middleware;
 
+use Closure;
 use Illuminate\Http\Request;
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 
-class AuthController extends Controller
+class RoleMiddleware
 {
-    public function register(Request $request)
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
+     * @param  string  $role
+     */
+    public function handle(Request $request, Closure $next, string $role)
     {
-        $request->validate([
-            'name'=>'required|string',
-            'email'=>'required|email|unique:users',
-            'password'=>'required|string',
-            'role'=>'required|in:customer,vendor'
-        ]);
+        $user = $request->user();
 
-        $user = User::create([
-            'name'=>$request->name,
-            'email'=>$request->email,
-            'password'=>Hash::make($request->password), // hashed password //
-            'role'=>$request->role
-        ]);
-
-        return response()->json(['user'=>$user],201);
-    }
-
-    public function login(Request $request)
-    {
-        $request->validate([
-            'email'=>'required|email',
-            'password'=>'required|string',
-        ]);
-
-        $user = User::where('email',$request->email)->first();
-
-        if(!$user || !Hash::check($request->password, $user->password)){
-            return response()->json(['message'=>'Invalid credentials'],401);
+        // Not logged in
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
         }
 
-        return response()->json(['user'=>$user,'role'=>$user->role]);
+        // Role mismatch
+        if ($user->role !== $role) {
+            return response()->json(['message' => 'Forbidden: Access denied'], 403);
+        }
+
+        return $next($request);
     }
 }

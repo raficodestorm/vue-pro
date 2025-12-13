@@ -1,6 +1,8 @@
 <template>
   <div class="login-main">
     <div class="login-form-card enter" aria-labelledby="login-title">
+
+      <!-- Header -->
       <div class="header-box">
         <div>
           <h3 id="login-title">Welcome back</h3>
@@ -9,32 +11,33 @@
 
         <div class="create-box">
           <small class="note">Not a member?</small>
-          <div>
-            <RouterLink to="/register" class="note link-main">
-              Create account
-            </RouterLink>
-          </div>
+          <RouterLink to="/register" class="note link-main">Create account</RouterLink>
         </div>
       </div>
 
+      <!-- General Error -->
       <div v-if="generalError" class="alert-error">
         {{ generalError }}
       </div>
 
+      <!-- Login Form -->
       <form @submit.prevent="submitLogin" id="loginForm">
+
+        <!-- Username -->
         <div class="field">
           <label class="label-log">Username or Email</label>
           <input
             type="text"
             class="input-log"
-            v-model="form.login"
+            v-model="form.username"
             placeholder="user@example.com"
-            :class="{ 'has-error': errors.login }"
+            :class="{ 'has-error': errors.username }"
             required
           />
-          <p v-if="errors.login" class="error-text">{{ errors.login }}</p>
+          <p v-if="errors.username" class="error-text">{{ errors.username }}</p>
         </div>
 
+        <!-- Password -->
         <div class="field">
           <label class="label-log">Password</label>
           <div class="password-box">
@@ -48,10 +51,8 @@
             />
             <button
               type="button"
-              id="togglePwd"
-              @click="togglePassword"
-              :aria-label="showPassword ? 'Hide password' : 'Show password'"
               class="eye-btn"
+              @click="togglePassword"
             >
               {{ showPassword ? "🙈" : "👁️" }}
             </button>
@@ -59,6 +60,7 @@
           <p v-if="errors.password" class="error-text">{{ errors.password }}</p>
         </div>
 
+        <!-- Actions -->
         <div class="actions">
           <label class="remember label-log">
             <input type="checkbox" v-model="form.remember" />
@@ -70,131 +72,103 @@
           </RouterLink>
         </div>
 
+        <!-- Submit Button -->
         <button :disabled="loading" class="btn btn-primary" type="submit">
           <span v-if="!loading">Sign in</span>
           <span v-else>Signing in...</span>
         </button>
-
-        <div class="divider-log">
-          <span></span>
-          <small>or continue with</small>
-          <span></span>
-        </div>
-
-        <div class="socials-log">
-          <button type="button" class="btn btn-outline">Google</button>
-          <button type="button" class="btn btn-outline">Apple</button>
-        </div>
-
-        <div class="meta">
-          <div class="note">
-            By signing in you accept our <a href="#">Terms</a>
-          </div>
-          <div><a href="#" class="help-link">Need help?</a></div>
-        </div>
       </form>
     </div>
   </div>
 </template>
 
+
 <script setup>
-  import { reactive, ref } from "vue";
-  import axios from "../../api/axios";
-  import { useRouter } from "vue-router";
-  
-  const router = useRouter();
-  
-  const loading = ref(false);
-  const showPassword = ref(false);
-  const generalError = ref(null);
-  
-  const form = reactive({
-    username: "", // changed from "login" to "username"
-    password: "",
-    remember: false,
-  });
-  
-  const errors = reactive({
-    username: null,
-    password: null,
-  });
-  
-  function togglePassword() {
-    showPassword.value = !showPassword.value;
-  }
-  
-  async function submitLogin() {
-    loading.value = true;
-  
-    errors.username = null;
-    errors.password = null;
-    generalError.value = null;
-  
-    try {
-      if (!form.username || !form.password) {
-        generalError.value = "Please fill in all fields.";
-        loading.value = false;
-        return;
-      }
-  
-      // Laravel POST /api/login
-      const res = await axios.post("/login", {
-        username: form.username,
-        password: form.password,
-      });
-  
-      // Save returned user + role
-      const user = res.data.user;
-      const role = res.data.role;
-  
-      // Store for session
-      localStorage.setItem("user", JSON.stringify(user));
-      localLocalIgnore("role", role);
-  
-      // Optional: If in future you add token, store it
-      if (res.data.token) {
-        localStorage.setItem("auth_token", res.data.token);
-      }
-  
-      // Redirect by role
-      switch (role) {
-        case "admin":
-          router.push("/admin");
-          break;
-  
-        case "controller":
-          router.push("/controller/dashboard");
-          break;
-  
-        case "manager":
-          router.push("/manager/dashboard");
-          break;
-  
-        default:
-          router.push("/user/dashboard");
-      }
-    } catch (err) {
-      console.error(err);
-  
-      // Validation errors
-      if (err.response?.status === 422 && err.response?.data?.errors) {
-        Object.assign(errors, err.response.data.errors);
-      }
-      // Invalid credentials
-      else if (err.response?.status === 401) {
-        generalError.value = "Invalid username or password.";
-      }
-      // Other errors
-      else {
-        generalError.value =
-          err.response?.data?.message ||
-          "Something went wrong. Please try again.";
-      }
-    } finally {
+import { reactive, ref } from "vue";
+import api from "../../api/axios.js";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
+const loading = ref(false);
+const showPassword = ref(false);
+const generalError = ref(null);
+
+const form = reactive({
+  username: "",
+  password: "",
+  remember: false,
+});
+
+const errors = reactive({
+  username: null,
+  password: null,
+});
+
+function togglePassword() {
+  showPassword.value = !showPassword.value;
+}
+
+async function submitLogin() {
+  loading.value = true;
+  generalError.value = null;
+  errors.username = null;
+  errors.password = null;
+
+  try {
+    if (!form.username || !form.password) {
+      generalError.value = "Please fill in all fields.";
       loading.value = false;
+      return;
     }
+
+    const res = await api.post("/login", {
+  username: form.username,
+  password: form.password,
+});
+
+const { user, role, token } = res.data;
+
+// Store
+localStorage.setItem("user", JSON.stringify(user));
+localStorage.setItem("role", role);
+localStorage.setItem("auth_token", token);
+
+// Set token for all future requests
+api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+
+    // Redirect Based on Role
+    switch (role) {
+      case "admin":
+        router.push("/admin");
+        break;
+      case "controller":
+        router.push("/controller/dashboard");
+        break;
+      case "manager":
+        router.push("/manager/dashboard");
+        break;
+      default:
+        router.push("/user/dashboard");
+    }
+
+  } catch (err) {
+    if (err.response?.status === 422 && err.response?.data?.errors) {
+      Object.assign(errors, err.response.data.errors);
+    } 
+    else if (err.response?.status === 401) {
+      generalError.value = "Invalid username or password.";
+    } 
+    else {
+      generalError.value = "Something went wrong. Please try again.";
+    }
+  } finally {
+    loading.value = false;
   }
-  </script>
+}
+</script>
+
   
 <style scoped>
 /* ASSUMPTION: You have the following variables in your global CSS:
