@@ -1,9 +1,13 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import api from "../../../api/axios.js";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 
 const router = useRouter();
+const route = useRoute();
+
+// route param
+const locationId = route.params.id;
 
 // form fields
 const district = ref("");
@@ -11,30 +15,47 @@ const division = ref("");
 
 // ui state
 const loading = ref(false);
+const pageLoading = ref(true);
 const message = ref("");
 const errors = ref({});
 
-// save location
-const saveLocation = async () => {
+/**
+ * Fetch existing location data
+ */
+const fetchLocation = async () => {
+  pageLoading.value = true;
+  try {
+    const res = await api.get(`/admin/locations/${locationId}`);
+    const data = res.data.data;
+
+    district.value = data.district;
+    division.value = data.division ?? "";
+
+  } catch (error) {
+    message.value = "Failed to load location data.";
+  } finally {
+    pageLoading.value = false;
+  }
+};
+
+/**
+ * Update location
+ */
+const updateLocation = async () => {
   loading.value = true;
   message.value = "";
   errors.value = {};
 
   try {
-    await api.post("/admin/locations", {
+    await api.put(`/admin/locations/${locationId}`, {
       district: district.value,
       division: division.value,
     });
 
-    message.value = "Location added successfully!";
+    message.value = "Location updated successfully!";
 
-    // reset form
-    district.value = "";
-    division.value = "";
-
-    // optional: redirect after success
     setTimeout(() => {
-      router.push("/admin/locations/index");
+      router.push("/admin/location/index");
     }, 800);
 
   } catch (error) {
@@ -49,17 +70,25 @@ const saveLocation = async () => {
     loading.value = false;
   }
 };
+
+onMounted(fetchLocation);
 </script>
 
 <template>
   <div class="container py-4 list-container">
-    <div class="card-box shadow">
+
+    <div v-if="pageLoading" class="text-center py-5">
+      <div class="spinner-border text-danger"></div>
+      <p class="mt-2">Loading location...</p>
+    </div>
+
+    <div v-else class="card-box shadow">
 
       <!-- Header -->
       <div class="header-bar">
-        <h2>Add New Location</h2>
+        <h2>Edit Location</h2>
         <router-link to="/admin/location/index" class="add-btn">
-          ← Location list
+          ← Back
         </router-link>
       </div>
 
@@ -73,7 +102,7 @@ const saveLocation = async () => {
       </div>
 
       <!-- Form -->
-      <form @submit.prevent="saveLocation">
+      <form @submit.prevent="updateLocation">
 
         <!-- District -->
         <div class="mb-3">
@@ -82,7 +111,6 @@ const saveLocation = async () => {
             type="text"
             v-model="district"
             class="form-control"
-            placeholder="Enter district name"
           />
           <small class="text-danger">{{ errors.district }}</small>
         </div>
@@ -94,7 +122,6 @@ const saveLocation = async () => {
             type="text"
             v-model="division"
             class="form-control"
-            placeholder="Enter division name"
           />
           <small class="text-danger">{{ errors.division }}</small>
         </div>
@@ -110,7 +137,7 @@ const saveLocation = async () => {
             fontWeight: '600'
           }"
         >
-          {{ loading ? "Saving..." : "Save Location" }}
+          {{ loading ? "Updating..." : "Update Location" }}
         </button>
 
       </form>

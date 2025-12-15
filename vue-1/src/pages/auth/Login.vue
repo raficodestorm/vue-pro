@@ -137,6 +137,8 @@ localStorage.setItem("auth_token", token);
 // Set token for all future requests
 api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
+// 🔥 CLOSE LOGIN MODAL
+window.dispatchEvent(new CustomEvent("close-login-modal"));
 
     // Redirect Based on Role
     switch (role) {

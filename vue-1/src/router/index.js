@@ -19,6 +19,7 @@ import RouteIndex from "../pages/admin/route/RouteIndex.vue";
 import RouteEdit from "../pages/admin/route/RouteEdit.vue";
 import LocationIndex from "../pages/admin/location/LocationIndex.vue";
 import LocationAdd from "../pages/admin/location/LocationAdd.vue";
+import LocationEdit from "../pages/admin/location/LocationEdit.vue";
 
 // ===================================
 // ROUTES
@@ -48,7 +49,8 @@ const routes = [
       { path: "route/edit/:id", name: "editroute", component: RouteEdit },
 
       { path: "location/index", name: "alllocation", component: LocationIndex },
-      { path: "location/add", name: "addlocation", component: LocationAdd }
+      { path: "location/add", name: "addlocation", component: LocationAdd },
+      { path: "location/edit/:id", name: "editlocation", component: LocationEdit }
     ],
   },
 ];

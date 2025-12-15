@@ -10,15 +10,28 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onBeforeUnmount } from "vue";
 import Login from "../pages/auth/Login.vue"; // ← your existing login.vue
 
 const show = ref(false);
 
+// handlers (important to keep reference)
+const openModal = () => {
+  show.value = true;
+};
+
+const closeModal = () => {
+  show.value = false;
+};
+
 onMounted(() => {
-  window.addEventListener("open-login-modal", () => {
-    show.value = true;
-  });
+  window.addEventListener("open-login-modal", openModal);
+  window.addEventListener("close-login-modal", closeModal);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("open-login-modal", openModal);
+  window.removeEventListener("close-login-modal", closeModal);
 });
 
 function close() {

@@ -49,7 +49,7 @@ const deleteRoute = async (id) => {
 
 // Navigate to edit page
 const editRoute = (id) => {
-  router.push(`/admin/locations/edit/${id}`);
+  router.push(`/admin/location/edit/${id}`);
 };
 
 onMounted(() => fetchRoutes());

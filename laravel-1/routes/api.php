@@ -48,5 +48,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
 
     Route::get('admin/locations', [LocationController::class, 'index']);
     Route::post('admin/locations', [LocationController::class, 'store']);
+    Route::get('admin/locations/{id}', [LocationController::class, 'show']);
+    Route::put('admin/locations/{id}', [LocationController::class, 'update']);
     Route::delete('admin/locations/{id}', [LocationController::class, 'destroy']);
 });
