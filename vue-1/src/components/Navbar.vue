@@ -51,32 +51,28 @@ const openLogin = () => {
       <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
         <ul class="navbar-nav align-items-lg-center">
           <li class="nav-item">
-            <router-link class="nav-link" to="/">Home</router-link>
+            <a href="#home" class="nav-link">Home</a>
           </li>
 
           <li class="nav-item">
-            <router-link class="nav-link" to="/book-ticket"
-              >Book Ticket</router-link
-            >
+            <a href="#routes" class="nav-link">Routes</a>
           </li>
 
           <!-- Services Dropdown -->
           <li class="nav-item dropdown">
             <a
-              class="nav-link dropdown-toggle"
+              class="nav-link "
               href="#"
               id="servicesMenu"
               role="button"
               data-bs-toggle="dropdown"
             >
-              Services
+              Services <span class="ms-1">&#9662;</span>
             </a>
 
             <ul class="dropdown-menu">
               <li>
-                <router-link class="dropdown-item" to="/routes"
-                  >Bus Routes</router-link
-                >
+                <a href="#services " class="dropdown-item">All services</a>
               </li>
               <li>
                 <router-link class="dropdown-item" to="/offers"
@@ -108,11 +104,6 @@ const openLogin = () => {
             </ul>
           </li>
 
-          <li class="nav-item">
-            <router-link class="nav-link" to="/my-bookings"
-              >My Bookings</router-link
-            >
-          </li>
 
           <!-- Authenticated User -->
           <li v-if="user" class="nav-item dropdown user-dropdown ms-lg-3">
@@ -147,7 +138,7 @@ const openLogin = () => {
               </li>
               <li><hr class="dropdown-divider" /></li>
               <li>
-                <button @click="logout" class="dropdown-item text-danger">
+                <button @click="logout" class="dropdown-item">
                   Logout
                 </button>
               </li>
@@ -178,7 +169,7 @@ const openLogin = () => {
               <li><hr class="dropdown-divider" /></li>
               <li>
                 <a
-                  class="dropdown-item text-danger"
+                  class="dropdown-item"
                   href="javascript:void(0)"
                   @click="openLogin"
                 >
@@ -271,18 +262,31 @@ h5 {
   animation: glowShift 0.8s ease-in-out infinite;
 }
 
+/* Menu items */
 .navbar-nav .nav-link {
-  color: var(--section-bg-color);
-  font-weight: 500;
-  margin: 0 10px;
-  transition: all 0.3s ease;
-  border-radius: 6px;
+  font-weight: 600;
+  margin: 0 12px;
+  position: relative;
+  color: #220901;
+  transition: all 0.4s ease;
 }
 
+.navbar-nav .nav-link::after {
+  content: '';
+  position: absolute;
+  width: 0%;
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  background: linear-gradient(90deg, #ff0000, #780116);
+  transition: width 0.3s ease;
+}
 .navbar-nav .nav-link:hover {
-  background: var(--section-bg-color);
-  color: white;
-  font-weight: 600;
+  color: #ff0000;
+}
+
+.navbar-nav .nav-link:hover::after {
+  width: 100%;
 }
 
 /* Dropdowns */

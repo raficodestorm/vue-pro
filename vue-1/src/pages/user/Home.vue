@@ -9,15 +9,21 @@
       <div>
     
         <!-- Hero + Search Form -->
+      <section id="home">
         <HomeHero>
           <BusSearchForm />
         </HomeHero>
+      </section>
     
         <!-- Popular Routes -->
+        <section id="routes">
         <PopularRoutes />
+        </section>
     
         <!-- Services -->
+        <section id="services">
         <ServiceSection />
+        </section>
     
       </div>
     </template>

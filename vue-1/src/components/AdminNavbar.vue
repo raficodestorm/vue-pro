@@ -46,7 +46,7 @@
         <!-- Profile Dropdown -->
         <div class="dropdown" ref="dropdownRef">
           <button
-            class="dropdown-toggle d-flex align-items-center"
+            class="toggles d-flex align-items-center"
             @click.stop="toggleDropdown"
             :aria-expanded="dropdownOpen"
             aria-haspopup="true"
@@ -231,7 +231,7 @@ h1, h2, h3, h4, h5 {
   margin-left: 6px;
   transition: transform 0.2s ease;
 }
-.dropdown-toggle[aria-expanded="true"] .arrow {
+.toggles[aria-expanded="true"] .arrow {
   transform: rotate(180deg);
 }
 
@@ -273,7 +273,7 @@ h1, h2, h3, h4, h5 {
 }
 
 /* Profile dropdown toggle button */
-.dropdown-toggle {
+.toggles {
   background: transparent; /* remove default button color */
   border: none;           /* remove default border */
   padding: 0;             /* no extra padding */

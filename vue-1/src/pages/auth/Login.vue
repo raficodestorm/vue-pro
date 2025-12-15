@@ -432,22 +432,32 @@ window.dispatchEvent(new CustomEvent("close-login-modal"));
 @media (max-width: 480px) {
   .login-main {
     padding: 0;
-    align-items: flex-start;
-    background: white; /* On mobile full screen, make it white */
+    align-items: stretch;
+    background: white;
   }
 
   .login-form-card {
     box-shadow: none;
     border-radius: 0;
-    padding: 24px;
-    height: 100vh;
+    padding: 20px;
+    width: 100%;
+    min-height: 90dvh;
+
     display: flex;
     flex-direction: column;
     justify-content: center;
   }
 
-  .actions {
-    flex-direction: row; /* Keep row even on mobile usually */
+  .header-box {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .create-box {
+    margin-top: 0;
+    font-size: 12px;
   }
 }
+
 </style>
