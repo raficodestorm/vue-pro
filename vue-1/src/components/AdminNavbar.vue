@@ -1,16 +1,16 @@
 <template>
-  <nav class="navbar sticky-top" id="header">
+  <nav class="navbar sticky-top" :id="headerId">
     <div class="container-fluid d-flex align-items-center justify-content-between">
       <!-- Search Form -->
       <form class="d-flex" role="search" @submit.prevent="handleSearch">
         <input
           v-model="searchQuery"
-          class="form-control"
+          class=" bg-none form-control "
           type="search"
           placeholder="Search"
           aria-label="Search"
         />
-        <button class="btn bg-white" type="submit">Search</button>
+        <button class="btn bg-none" type="submit">Search</button>
       </form>
 
       <!-- Panel Name -->
@@ -88,7 +88,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, watch } from "vue";
+import { ref, onMounted, onBeforeUnmount, watch, computed } from "vue";
 import { useRouter } from "vue-router";
 import api from "../api/axios.js";
 
@@ -152,6 +152,19 @@ const handleNotificationClick = () => {
   notifications.value = 0;
 };
 
+const headerId = computed(() => {
+  switch (userRole.value) {
+    case "admin":
+      return "header-admin";
+    case "counter_manager":
+      return "header-manager";
+    case "controller":
+      return "header-controller";
+    default:
+      return "";
+  }
+});
+
 const logout = async () => {
   try {
     await api.post("/logout");
@@ -181,11 +194,32 @@ h1, h2, h3, h4, h5 {
   font-weight: 800;
 }
 .names{color: #000; margin-bottom: 0;}
-#header {
+/* Common header style */
+#header,
+#header-admin,
+#header-manager,
+#header-controller {
   border-bottom: 0.5px solid var(--main-color);
+}
+
+/* ADMIN */
+#header-admin {
   background-color: var(--bg-color);
 }
 
+/* MANAGER */
+#header-manager {
+  background-color: #ffcbdd;
+}
+
+/* CONTROLLER */
+#header-controller {
+  background-color: #780116;
+}
+
+.form-controll{
+  background-color: none !important;
+}
 .panel {
   margin-bottom: 0;
   color: #ff8989e0;

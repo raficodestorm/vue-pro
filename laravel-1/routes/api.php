@@ -57,6 +57,4 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
 // =========================
 // Admin Protected Routes
 // =========================
-Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
-
-});
+Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {});

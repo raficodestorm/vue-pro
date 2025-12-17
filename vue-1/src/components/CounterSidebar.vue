@@ -115,25 +115,25 @@ const menuItems = ref([
     showSubmenu: false,
   },
 
-  {
-    title: "Drivers",
-    icon: "driver",
-    submenu: [
-      { title: "Add Driver", icon: "driver", route: "/admin" },
-      { title: "All Drivers", icon: "list", route: "/admin" },
-    ],
-    showSubmenu: false,
-  },
+  // {
+  //   title: "Drivers",
+  //   icon: "driver",
+  //   submenu: [
+  //     { title: "Add Driver", icon: "driver", route: "/admin" },
+  //     { title: "All Drivers", icon: "list", route: "/admin" },
+  //   ],
+  //   showSubmenu: false,
+  // },
 
-  {
-    title: "Supervisor",
-    icon: "supervisor",
-    submenu: [
-      { title: "Add Supervisor", icon: "supervisor", route: "/admin" },
-      { title: "All Supervisors", icon: "list", route: "/admin" },
-    ],
-    showSubmenu: false,
-  },
+  // {
+  //   title: "Supervisor",
+  //   icon: "supervisor",
+  //   submenu: [
+  //     { title: "Add Supervisor", icon: "supervisor", route: "/admin" },
+  //     { title: "All Supervisors", icon: "list", route: "/admin" },
+  //   ],
+  //   showSubmenu: false,
+  // },
 
   {
     title: "Schedule",
@@ -178,40 +178,7 @@ const menuItems = ref([
     showSubmenu: false,
   },
 
-  {
-    title: "Counter",
-    icon: "counter",
-    submenu: [
-      { title: "Add Counter", icon: "counter", route: "/admin" },
-      { title: "All Counters", icon: "list", route: "/admin" },
-    ],
-    showSubmenu: false,
-  },
 
-  {
-    title: "Users",
-    icon: "user1",
-    submenu: [
-      { title: "Add Users", icon: "adduser", route: "/admin" },
-      { title: "Manage admins", icon: "admins", route: "/admin" },
-      { title: "Manage controllers", icon: "controllers", route: "/admin" },
-      { title: "Manage Managers", icon: "managers", route: "/admin" },
-      { title: "Manage Users", icon: "allusers", route: "/admin" },
-    ],
-    showSubmenu: false,
-  },
-
-  {
-    title: "Cost",
-    icon: "schedule",
-    submenu: [
-      { title: "Add Cost", icon: "addschedule", route: "/admin" },
-      { title: "All Costs", icon: "list", route: "/admin" },
-    ],
-    showSubmenu: false,
-  },
-
-  { title: "Calendar", icon: "schedule", route: "#" },
 ]);
 
 /* Toggle submenu open/close */
@@ -234,7 +201,7 @@ h5 {
 .sidebar {
   min-height: 100vh;
   width: 220px;
-  background-color: var(--bg-color);
+  background-color: #ffcbdd;
   padding: 5px 0.5rem;
   /* border-right: 0.5px solid var(--main-color); */
   position: sticky !important;
