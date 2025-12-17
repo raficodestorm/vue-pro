@@ -22,6 +22,14 @@ class LocationController extends Controller
         ]);
     }
 
+    public function locationfetch()
+{
+    return response()->json([
+        'status' => 200,
+        'data' => Location::orderBy('district')->get(['id', 'district']),
+    ]);
+}
+
     /**
      * Store a new location.
      */

@@ -20,7 +20,7 @@ const locations = ref([]);
 // fetch locations
 const fetchLocations = async () => {
   try {
-    const res = await api.get("/locations");
+    const res = await api.get("admin/locationfetch");
     locations.value = res.data.data;
   } catch (error) {
     console.error("Failed to fetch locations", error);
@@ -36,7 +36,7 @@ const saveRoute = async () => {
   errors.value = {};
 
   try {
-    await api.post("/routes", {
+    await api.post("admin/routes", {
       route_code: route_code.value,
       start_location: start_location.value,
       end_location: end_location.value,

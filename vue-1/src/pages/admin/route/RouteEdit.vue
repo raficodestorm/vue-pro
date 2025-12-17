@@ -24,7 +24,7 @@ const locations = ref([]);
 // fetch locations
 const fetchLocations = async () => {
   try {
-    const res = await api.get("/locations");
+    const res = await api.get("admin/locationfetch");
     locations.value = res.data.data;
   } catch (error) {
     console.error("Failed to fetch locations", error);
@@ -35,7 +35,7 @@ const fetchLocations = async () => {
 const fetchRoute = async () => {
   loading.value = true;
   try {
-    const res = await api.get(`/routes/${route.params.id}`);
+    const res = await api.get(`admin/routes/${route.params.id}`);
     const data = res.data.data;
     route_code.value = data.route_code;
     start_location.value = data.start_location;

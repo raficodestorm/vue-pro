@@ -137,7 +137,7 @@ localStorage.setItem("auth_token", token);
 // Set token for all future requests
 api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-// 🔥 CLOSE LOGIN MODAL
+// CLOSE LOGIN MODAL
 window.dispatchEvent(new CustomEvent("close-login-modal"));
 
     // Redirect Based on Role
@@ -146,13 +146,13 @@ window.dispatchEvent(new CustomEvent("close-login-modal"));
         router.push("/admin");
         break;
       case "controller":
-        router.push("/controller/dashboard");
+        router.push("/controller");
         break;
-      case "manager":
-        router.push("/manager/dashboard");
+      case "counter_manager":
+        router.push("/manager");
         break;
       default:
-        router.push("/user/dashboard");
+        router.push("/user");
     }
 
   } catch (err) {

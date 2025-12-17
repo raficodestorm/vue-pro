@@ -14,7 +14,7 @@
       message.value = "";
     
       try {
-        const response = await axios.post("/bustypes", {
+        const response = await axios.post("admin/bustypes", {
           type: type.value,
         });
     
@@ -35,9 +35,13 @@
     <template>
       <div class="bus-container">
         <!-- Status Message -->
-        <small v-if="errors?.type" class="text-danger fw-semibold">
-          {{ errors.type[0] }}
-        </small>
+        <div
+        v-if="message"
+        class="alert"
+        :class="message.includes('success') ? 'alert-success' : 'alert-danger'"
+      >
+        {{ message }}
+      </div>
 
     
         <!-- Header Section -->

@@ -20,6 +20,8 @@ import RouteEdit from "../pages/admin/route/RouteEdit.vue";
 import LocationIndex from "../pages/admin/location/LocationIndex.vue";
 import LocationAdd from "../pages/admin/location/LocationAdd.vue";
 import LocationEdit from "../pages/admin/location/LocationEdit.vue";
+import CounterLayout from "../layouts/CounterLayout.vue";
+import Counter from "../pages/dashboard/Counter.vue";
 
 // ===================================
 // ROUTES
@@ -53,6 +55,14 @@ const routes = [
       { path: "location/edit/:id", name: "editlocation", component: LocationEdit }
     ],
   },
+
+  {
+    path: "/manager",
+    component: CounterLayout,
+    children: [
+      { path: "", component: Counter },
+    ],
+  },
 ];
 
 // ===================================
@@ -81,7 +91,7 @@ router.beforeEach((to, from, next) => {
   // Role restrictions
   if (to.path.startsWith("/admin") && role !== "admin") return next("/");
   if (to.path.startsWith("/controller") && role !== "controller") return next("/");
-  if (to.path.startsWith("/manager") && role !== "manager") return next("/");
+  if (to.path.startsWith("/manager") && role !== "counter_manager") return next("/");
   if (to.path.startsWith("/user") && role !== "user") return next("/");
 
   next();

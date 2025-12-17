@@ -41,6 +41,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
 
     // Route CRUD
     Route::get('admin/routes', [RouteController::class, 'index']);
+    Route::get('admin/locationfetch', [LocationController::class, 'locationfetch']);
     Route::post('admin/routes', [RouteController::class, 'store']);
     Route::get('admin/routes/{id}', [RouteController::class, 'show']);
     Route::put('admin/routes/{id}', [RouteController::class, 'update']);
@@ -51,4 +52,11 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::get('admin/locations/{id}', [LocationController::class, 'show']);
     Route::put('admin/locations/{id}', [LocationController::class, 'update']);
     Route::delete('admin/locations/{id}', [LocationController::class, 'destroy']);
+});
+
+// =========================
+// Admin Protected Routes
+// =========================
+Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+
 });
