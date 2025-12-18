@@ -61,6 +61,18 @@ const routes = [
     component: CounterLayout,
     children: [
       { path: "", component: Counter },
+      { path: "bus/index", name: "allbuses", component: BusIndex },
+      { path: "bus/add", name: "addbus", component: BusAdd },
+      { path: "bustype/add", name: "addbustype", component: BustypeAdd },
+      { path: "bustype/index", name: "allbustype", component: BustypeIndex },
+
+      { path: "route/add", name: "addroute", component: RouteAdd },
+      { path: "route/index", name: "allroute", component: RouteIndex },
+      { path: "route/edit/:id", name: "editroute", component: RouteEdit },
+
+      { path: "location/index", name: "alllocation", component: LocationIndex },
+      { path: "location/add", name: "addlocation", component: LocationAdd },
+      { path: "location/edit/:id", name: "editlocation", component: LocationEdit }
     ],
   },
 ];

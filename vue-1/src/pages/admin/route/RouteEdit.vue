@@ -66,7 +66,7 @@ const updateRoute = async () => {
     });
 
     message.value = "Route updated successfully!";
-    setTimeout(() => router.push("/admin/route/index"), 1500); // redirect after success
+    setTimeout(() => router.push("/manager/route/index"), 1500); // redirect after success
   } catch (error) {
     if (error.response?.status === 422) {
       errors.value = error.response.data.errors || {};

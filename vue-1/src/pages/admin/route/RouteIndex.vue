@@ -49,7 +49,7 @@ const deleteRoute = async (id) => {
 
 // Navigate to edit page
 const editRoute = (id) => {
-  router.push(`/admin/route/edit/${id}`);
+  router.push(`/manager/route/edit/${id}`);
 };
 
 onMounted(() => fetchRoutes());
@@ -61,7 +61,7 @@ onMounted(() => fetchRoutes());
     <!-- Header -->
     <div class="header-bar">
       <h2>Route List</h2>
-      <router-link to="/admin/route/add" class="add-btn">
+      <router-link to="/manager/route/add" class="add-btn">
         + Add New
       </router-link>
     </div>

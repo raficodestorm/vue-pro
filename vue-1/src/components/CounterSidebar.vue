@@ -93,14 +93,14 @@ const getIcon = (name) => {
 
 /* Sidebar Menu Items */
 const menuItems = ref([
-  { title: "Dashboard", icon: "dashboard", route: "/admin" },
+  { title: "Dashboard", icon: "dashboard", route: "/manager" },
 
   {
     title: "Bus type",
     icon: "addbus",
     submenu: [
-      { title: "Add Bustype", icon: "bus", route: "/admin/bustype/add" },
-      { title: "All Bustypes", icon: "list", route: "/admin/bustype/index" },
+      { title: "Add Bustype", icon: "bus", route: "/manager/bustype/add" },
+      { title: "All Bustypes", icon: "list", route: "/manager/bustype/index" },
     ],
     showSubmenu: false,
   },
@@ -109,8 +109,8 @@ const menuItems = ref([
     title: "Buses",
     icon: "bus",
     submenu: [
-      { title: "Add New Bus", icon: "addbus", route: "/admin/bus/add" },
-      { title: "All Buses", icon: "list", route: "/admin/bus/index" },
+      { title: "Add New Bus", icon: "addbus", route: "/manager/bus/add" },
+      { title: "All Buses", icon: "list", route: "/manager/bus/index" },
     ],
     showSubmenu: false,
   },
@@ -139,8 +139,8 @@ const menuItems = ref([
     title: "Schedule",
     icon: "schedule",
     submenu: [
-      { title: "Create schedule", icon: "addschedule", route: "/admin" },
-      { title: "All schedules", icon: "list", route: "/admin" },
+      { title: "Create schedule", icon: "addschedule", route: "/manager" },
+      { title: "All schedules", icon: "list", route: "/manager" },
     ],
     showSubmenu: false,
   },
@@ -149,21 +149,21 @@ const menuItems = ref([
     title: "Trips",
     icon: "trip",
     submenu: [
-      { title: "Pending Trips", icon: "pending", route: "/admin" },
-      { title: "Running Trips", icon: "running", route: "/admin" },
-      { title: "Finished Trips", icon: "finish", route: "/admin" },
+      { title: "Pending Trips", icon: "pending", route: "/manager" },
+      { title: "Running Trips", icon: "running", route: "/manager" },
+      { title: "Finished Trips", icon: "finish", route: "/manager" },
     ],
     showSubmenu: false,
   },
 
-  { title: "Bookings", icon: "booking", route: "/admin" },
+  { title: "Bookings", icon: "booking", route: "/manager" },
 
   {
     title: "location",
     icon: "location",
     submenu: [
-      { title: "Add location", icon: "addlocation", route: "/admin/location/add" },
-      { title: "All locations", icon: "list", route: "/admin/location/index" },
+      { title: "Add location", icon: "addlocation", route: "/manager/location/add" },
+      { title: "All locations", icon: "list", route: "/manager/location/index" },
     ],
     showSubmenu: false,
   },
@@ -172,8 +172,8 @@ const menuItems = ref([
     title: "Route",
     icon: "route",
     submenu: [
-      { title: "Add Route", icon: "addroute", route: "/admin/route/add" },
-      { title: "All Routes", icon: "list", route: "/admin/route/index" },
+      { title: "Add Route", icon: "addroute", route: "/manager/route/add" },
+      { title: "All Routes", icon: "list", route: "/manager/route/index" },
     ],
     showSubmenu: false,
   },
