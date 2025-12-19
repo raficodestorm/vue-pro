@@ -93,54 +93,34 @@ const getIcon = (name) => {
 
 /* Sidebar Menu Items */
 const menuItems = ref([
-  { title: "Dashboard", icon: "dashboard", route: "/manager" },
+  { title: "Dashboard", icon: "dashboard", route: "/admin" },
 
   {
-    title: "Bus type",
-    icon: "addbus",
+    title: "Drivers",
+    icon: "driver",
     submenu: [
-      { title: "Add Bustype", icon: "bus", route: "/manager/bustype/add" },
-      { title: "All Bustypes", icon: "list", route: "/manager/bustype/index" },
+      { title: "Add Driver", icon: "driver", route: "/admin" },
+      { title: "All Drivers", icon: "list", route: "/admin" },
     ],
     showSubmenu: false,
   },
 
   {
-    title: "Buses",
-    icon: "bus",
+    title: "Supervisor",
+    icon: "supervisor",
     submenu: [
-      { title: "Add New Bus", icon: "addbus", route: "/manager/bus/add" },
-      { title: "All Buses", icon: "list", route: "/manager/bus/index" },
+      { title: "Add Supervisor", icon: "supervisor", route: "/admin" },
+      { title: "All Supervisors", icon: "list", route: "/admin" },
     ],
     showSubmenu: false,
   },
-
-  // {
-  //   title: "Drivers",
-  //   icon: "driver",
-  //   submenu: [
-  //     { title: "Add Driver", icon: "driver", route: "/admin" },
-  //     { title: "All Drivers", icon: "list", route: "/admin" },
-  //   ],
-  //   showSubmenu: false,
-  // },
-
-  // {
-  //   title: "Supervisor",
-  //   icon: "supervisor",
-  //   submenu: [
-  //     { title: "Add Supervisor", icon: "supervisor", route: "/admin" },
-  //     { title: "All Supervisors", icon: "list", route: "/admin" },
-  //   ],
-  //   showSubmenu: false,
-  // },
 
   {
     title: "Schedule",
     icon: "schedule",
     submenu: [
-      { title: "Create schedule", icon: "addschedule", route: "/manager" },
-      { title: "All schedules", icon: "list", route: "/manager" },
+      { title: "Create schedule", icon: "addschedule", route: "/admin" },
+      { title: "All schedules", icon: "list", route: "/admin" },
     ],
     showSubmenu: false,
   },
@@ -149,36 +129,34 @@ const menuItems = ref([
     title: "Trips",
     icon: "trip",
     submenu: [
-      { title: "Pending Trips", icon: "pending", route: "/manager" },
-      { title: "Running Trips", icon: "running", route: "/manager" },
-      { title: "Finished Trips", icon: "finish", route: "/manager" },
+      { title: "Pending Trips", icon: "pending", route: "/admin" },
+      { title: "Running Trips", icon: "running", route: "/admin" },
+      { title: "Finished Trips", icon: "finish", route: "/admin" },
     ],
     showSubmenu: false,
   },
-
-  { title: "Bookings", icon: "booking", route: "/manager" },
 
   {
     title: "location",
     icon: "location",
     submenu: [
-      { title: "Add location", icon: "addlocation", route: "/manager/location/add" },
-      { title: "All locations", icon: "list", route: "/manager/location/index" },
+      { title: "Add location", icon: "addlocation", route: "/admin/location/add" },
+      { title: "All locations", icon: "list", route: "/admin/location/index" },
     ],
     showSubmenu: false,
   },
 
   {
-    title: "Route",
-    icon: "route",
+    title: "Cost",
+    icon: "schedule",
     submenu: [
-      { title: "Add Route", icon: "addroute", route: "/manager/route/add" },
-      { title: "All Routes", icon: "list", route: "/manager/route/index" },
+      { title: "Add Cost", icon: "addschedule", route: "/admin" },
+      { title: "All Costs", icon: "list", route: "/admin" },
     ],
     showSubmenu: false,
   },
 
-
+  { title: "Calendar", icon: "schedule", route: "#" },
 ]);
 
 /* Toggle submenu open/close */
@@ -201,7 +179,7 @@ h5 {
 .sidebar {
   min-height: 100vh;
   width: 220px;
-  background-color: var(--back-color);
+  background-color: var(--bg-color);
   padding: 5px 0.5rem;
   /* border-right: 0.5px solid var(--main-color); */
   position: sticky !important;

@@ -156,7 +156,7 @@ const headerId = computed(() => {
   switch (userRole.value) {
     case "admin":
       return "header-admin";
-    case "counter_manager":
+    case "counter":
       return "header-manager";
     case "controller":
       return "header-controller";
@@ -209,16 +209,12 @@ h1, h2, h3, h4, h5 {
 
 /* MANAGER */
 #header-manager {
-  background-color: #ffcbdd;
+  background-color: var(--back-color);
 }
 
 /* CONTROLLER */
 #header-controller {
-  background-color: #780116;
-}
-
-.form-controll{
-  background-color: none !important;
+  background-color: var(--bg-color);
 }
 .panel {
   margin-bottom: 0;

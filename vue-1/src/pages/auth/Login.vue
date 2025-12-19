@@ -148,7 +148,7 @@ window.dispatchEvent(new CustomEvent("close-login-modal"));
       case "controller":
         router.push("/controller");
         break;
-      case "counter_manager":
+      case "counter":
         router.push("/manager");
         break;
       default:

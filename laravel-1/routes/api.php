@@ -55,26 +55,17 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
 });
 
 // =========================
-// Admin Protected Routes
+// controller Protected Routes
 // =========================
-Route::middleware(['auth:sanctum', 'role:counter_manager'])->group(function () {
-    // Bustype CRUD
-    Route::get('admin/bustypes', [BustypeController::class, 'index']);
-    Route::post('admin/bustypes', [BustypeController::class, 'store']);
-    Route::get('admin/bustypes/{id}', [BustypeController::class, 'show']);
-    Route::delete('admin/bustypes/{id}', [BustypeController::class, 'destroy']);
+Route::middleware(['auth:sanctum', 'role:controller'])->group(function () {});
 
-    // Route CRUD
-    Route::get('admin/routes', [RouteController::class, 'index']);
-    Route::get('admin/locationfetch', [LocationController::class, 'locationfetch']);
-    Route::post('admin/routes', [RouteController::class, 'store']);
-    Route::get('admin/routes/{id}', [RouteController::class, 'show']);
-    Route::put('admin/routes/{id}', [RouteController::class, 'update']);
-    Route::delete('admin/routes/{id}', [RouteController::class, 'destroy']);
 
-    Route::get('admin/locations', [LocationController::class, 'index']);
-    Route::post('admin/locations', [LocationController::class, 'store']);
-    Route::get('admin/locations/{id}', [LocationController::class, 'show']);
-    Route::put('admin/locations/{id}', [LocationController::class, 'update']);
-    Route::delete('admin/locations/{id}', [LocationController::class, 'destroy']);
-});
+// =========================
+// counter Protected Routes
+// =========================
+Route::middleware(['auth:sanctum', 'role:counter'])->group(function () {});
+
+// =========================
+// user Protected Routes
+// =========================
+Route::middleware(['auth:sanctum', 'role:user'])->group(function () {});
