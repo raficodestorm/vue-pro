@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\Admin\LocationController;
 use App\Http\Controllers\Api\Admin\RouteController;
 use App\Http\Controllers\Api\Admin\BustypeController;
+use App\Http\Controllers\Api\Admin\BusController;
 
 // =========================
 // Public Routes
@@ -38,6 +39,14 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::post('admin/bustypes', [BustypeController::class, 'store']);
     Route::get('admin/bustypes/{id}', [BustypeController::class, 'show']);
     Route::delete('admin/bustypes/{id}', [BustypeController::class, 'destroy']);
+
+    // Buses CRUD
+    Route::get('admin/routesfetch', [RouteController::class, 'routesfetch']);
+    Route::get('admin/typesfetch', [BustypeController::class, 'typesfetch']);
+    Route::get('admin/buses', [BusController::class, 'index']);
+    Route::post('admin/buses', [BusController::class, 'store']);
+    Route::get('admin/buses/{id}', [BusController::class, 'show']);
+    Route::delete('admin/buses/{id}', [BusController::class, 'destroy']);
 
     // Route CRUD
     Route::get('admin/routes', [RouteController::class, 'index']);

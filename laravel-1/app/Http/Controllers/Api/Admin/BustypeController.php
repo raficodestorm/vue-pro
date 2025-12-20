@@ -18,6 +18,13 @@ class BustypeController extends Controller
             'types' => Bustype::orderBy('type', 'asc')->get()
         ]);
     }
+    public function typesfetch()
+    {
+        return response()->json([
+            'status' => 200,
+            'data' => Bustype::orderBy('type')->get(['id', 'type']),
+        ]);
+    }
 
     /**
      * Store a newly created bus type.

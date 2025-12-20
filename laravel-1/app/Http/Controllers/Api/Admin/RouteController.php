@@ -23,6 +23,13 @@ class RouteController extends Controller
             'data' => $routes,
         ]);
     }
+    public function routesfetch()
+    {
+        return response()->json([
+            'status' => 200,
+            'data' => RouteModel::orderBy('route_code')->get(['id', 'route_code']),
+        ]);
+    }
 
     /**
      * Store a newly created route.

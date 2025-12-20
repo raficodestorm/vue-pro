@@ -232,7 +232,7 @@ onMounted(() => {
         {
           label: "Bookings",
           data: [120, 95, 110, 130, 125, 140, 100, 115, 90, 105, 98, 150],
-          backgroundColor: "#ff0a54",
+          backgroundColor: "#ff0000",
           borderRadius: 5,
         },
       ],
@@ -263,9 +263,9 @@ onMounted(() => {
   border: 0.3px solid var(--main-color);
   background: linear-gradient(
     135deg,
-    #ffffff 0%,
-    #f8f8f8 50%,
-    #ffcbdd 100%
+    #ffffff 50%,
+    #ff01013b 75%,
+    #ff0101b4 100%
   );
   border-radius: 0.6rem;
   position: relative;

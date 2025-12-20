@@ -209,7 +209,7 @@ h1, h2, h3, h4, h5 {
 
 /* MANAGER */
 #header-manager {
-  background-color: var(--back-color);
+  background-color: var(--bg-color);
 }
 
 /* CONTROLLER */

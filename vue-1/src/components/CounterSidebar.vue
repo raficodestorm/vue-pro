@@ -201,7 +201,7 @@ h5 {
 .sidebar {
   min-height: 100vh;
   width: 220px;
-  background-color: var(--back-color);
+  background-color: var(--bg-color);
   padding: 5px 0.5rem;
   /* border-right: 0.5px solid var(--main-color); */
   position: sticky !important;
