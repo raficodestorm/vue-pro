@@ -13,6 +13,7 @@ import Register from "../pages/auth/Register.vue";
 import Admin from "../pages/dashboard/Admin.vue";
 import BusIndex from "../pages/admin/bus/BusIndex.vue";
 import BusAdd from "../pages/admin/bus/BusAdd.vue";
+import BusEdit from "../pages/admin/bus/BusEdit.vue";
 import BustypeAdd from "../pages/admin/bustype/BustypeAdd.vue";
 import BustypeIndex from "../pages/admin/bustype/BustypeIndex.vue";
 import RouteAdd from "../pages/admin/route/RouteAdd.vue";
@@ -45,6 +46,8 @@ const routes = [
       { path: "", component: Admin },
       { path: "bus/index", name: "allbuses", component: BusIndex },
       { path: "bus/add", name: "addbus", component: BusAdd },
+      { path: "bus/edit/:id", name: "editbus", component: BusEdit },
+      
       { path: "bustype/add", name: "addbustype", component: BustypeAdd },
       { path: "bustype/index", name: "allbustype", component: BustypeIndex },
 

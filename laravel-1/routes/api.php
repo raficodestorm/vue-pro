@@ -46,6 +46,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::get('admin/buses', [BusController::class, 'index']);
     Route::post('admin/buses', [BusController::class, 'store']);
     Route::get('admin/buses/{id}', [BusController::class, 'show']);
+    Route::put('admin/buses/{id}', [BusController::class, 'update']);
     Route::delete('admin/buses/{id}', [BusController::class, 'destroy']);
 
     // Route CRUD

@@ -1,21 +1,85 @@
+<script setup>
+import { ref, onMounted } from "vue";
+import axios from '../../../api/axios.js';
+import { useRouter } from "vue-router";
+import "../indexstyle.css"
+
+const router = useRouter();
+const buses = ref([]);
+const loading = ref(true);
+
+// Pagination states
+const currentPage = ref(1);
+const lastPage = ref(1);
+const perPage = ref(10);
+const total = ref(0);
+
+// Fetch routes with pagination
+const fetchBuses = async (page = 1) => {
+  loading.value = true;
+  try {
+    const res = await axios.get("/admin/buses", {
+      params: { page, per_page: perPage.value },
+    });
+
+    const paginated = res.data.data;
+    buses.value = paginated.data;       // actual array
+    currentPage.value = paginated.current_page;
+    lastPage.value = paginated.last_page;
+    perPage.value = paginated.per_page;
+    total.value = paginated.total;
+
+  } catch (error) {
+    console.error("Failed to load Buses", error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+// Delete route
+const deleteBus = async (id) => {
+  if (!confirm("Are you sure you want to delete this bus?")) return;
+  try {
+    await axios.delete(`/admin/buses/${id}`);
+    fetchBuses(currentPage.value);
+  } catch (error) {
+    console.error("Failed to delete bus", error);
+  }
+};
+
+// Navigate to edit page
+const editBus = (id) => {
+  router.push(`/admin/bus/edit/${id}`);
+};
+
+onMounted(() => fetchBuses());
+</script>
+
 <template>
-    <div class="container-fluid main-area">
-      <div class="index-card">
-  
-        <!-- Success Message (static version) -->
-        <div v-if="successMessage" class="alert alert-success">
-          {{ successMessage }}
-        </div>
-  
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h2 class="text-center">All Buses</h2>
-          <button class="btn btn-info">Add New Bus</button>
-        </div>
-  
-        <table class="table table-bordered table-hover" id="table-same">
-          <thead>
-            <tr>
-              <th>ID</th>
+  <div class="list-container">
+
+    <!-- Header -->
+    <div class="header-bar">
+      <h2>Bus List</h2>
+      <router-link to="/admin/bus/add" class="add-btn">
+        + Add New
+      </router-link>
+    </div>
+
+    <!-- Card Box -->
+    <div class="card-box shadow">
+
+      <!-- Loading -->
+      <div v-if="loading" class="text-center py-3">
+        <div class="spinner-border text-danger"></div>
+        <p>Loading buses...</p>
+      </div>
+
+      <!-- Routes Table -->
+      <table v-else class="table table-bordered table-hover align-middle custom-table">
+        <thead>
+          <tr>
+            <th>#</th>
               <th>Name</th>
               <th>Coach</th>
               <th>License</th>
@@ -24,160 +88,58 @@
               <th>Route</th>
               <th>Seat layout</th>
               <th>Seat capacity</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-  
-          <tbody>
-            <tr v-for="(bus, index) in buses" :key="index">
-              <th scope="row">{{ index + 1 }}</th>
-              <td>{{ bus.name }}</td>
-              <td>{{ bus.coach_no }}</td>
-              <td>{{ bus.license }}</td>
-              <td>{{ bus.company }}</td>
-              <td>{{ bus.bus_type }}</td>
-              <td>{{ bus.route }}</td>
-              <td>{{ bus.seat_layout }}</td>
-              <td>{{ bus.seat_capacity }}</td>
-              <td>
-                <button class="btn btn-sm btn-info">View</button>
-                <button class="btn btn-sm btn-warning">Edit</button>
-                <button class="btn btn-sm btn-danger">Delete</button>
-              </td>
-            </tr>
-  
-            <tr v-if="buses.length === 0">
-              <td colspan="10" class="text-center text-muted">No records found.</td>
-            </tr>
-          </tbody>
-  
-        </table>
-  
-        <div class="d-flex justify-content-center">
-          <!-- Pagination (optional static) -->
-        </div>
-  
+            <th width="180">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(bus, index) in buses" :key="bus.id">
+            <td>{{ (currentPage - 1) * perPage + index + 1 }}</td>
+            <td class="fw-semibold">{{ bus.name }}</td>
+            <td class="fw-semibold">{{ bus.coach_no }}</td>
+            <td class="fw-semibold">{{ bus.license }}</td>
+            <td class="fw-semibold">{{ bus.company }}</td>
+            <td class="fw-semibold">{{ bus.bus_type }}</td>
+            <td class="fw-semibold">{{ bus.route }}</td>
+            <td class="fw-semibold">{{ bus.seat_layout }}</td>
+            <td class="fw-semibold">{{ bus.seat_capacity }}</td>
+            <td>
+              <div class="action-btns">
+                <button @click="editBus(bus.id)" class="edit-btn">Edit</button>
+                <button @click="deleteBus(bus.id)" class="delete-btn">Delete</button>
+              </div>
+            </td>
+          </tr>
+
+          <tr v-if="buses.length === 0">
+            <td colspan="7" class="text-center">No Bus found</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Pagination -->
+      <div class="d-flex justify-content-between align-items-center mt-3">
+        <button
+          class="btn btn-sm btn-outline-danger"
+          :disabled="currentPage === 1"
+          @click="fetchBuses(currentPage - 1)"
+        >
+          Previous
+        </button>
+
+        <span class="fw-semibold">
+          Page {{ currentPage }} of {{ lastPage }} | Total: {{ total }}
+        </span>
+
+        <button
+          class="btn btn-sm btn-outline-danger"
+          :disabled="currentPage === lastPage"
+          @click="fetchBuses(currentPage + 1)"
+        >
+          Next
+        </button>
       </div>
+
     </div>
-  </template>
-  
-  <script setup>
-  import { ref } from "vue";
-  
-  const successMessage = ref("Bus record loaded successfully!");
-  
-  // Static example data (replace with API later)
-  const buses = ref([
-    {
-      name: "Green Line",
-      coach_no: "101",
-      license: "DHA12345",
-      company: "Green Line",
-      bus_type: "AC",
-      route: "Dhaka–Chittagong",
-      seat_layout: "2×2",
-      seat_capacity: 40,
-    },
-    {
-      name: "Shohag",
-      coach_no: "102",
-      license: "DHA54321",
-      company: "Shohag",
-      bus_type: "Non-AC",
-      route: "Dhaka–Cox's Bazar",
-      seat_layout: "2×1",
-      seat_capacity: 36,
-    },
-  ]);
-  </script>
-  
-  <style scoped>
-  .main-area {
-    min-height: 90vh;
-    width: 100%;
-    padding: 3rem;
-    background-color: var(--back-color);
-  }
-  
-  /* card */
-  .index-card {
-    border: 0.5px solid var(--main-color);
-    border-radius: 1rem;
-    padding: 1rem;
-    background-color: var(--bg-color);
-  }
-  
-  /* table */
-  #table-same {
-    border-collapse: separate;
-    border-spacing: 0;
-    width: 100%;
-    border-radius: 12px;
-    overflow: hidden;
-  }
-  
-  #table-same thead th {
-    background-color: #ff0000;
-    color: #fff;
-    text-align: center;
-    font-weight: 600;
-    font-size: 15px;
-    letter-spacing: 0.5px;
-    padding: 12px 10px;
-  }
-  
-  #table-same tbody td,
-  #table-same tbody th {
-    text-align: center;
-    vertical-align: middle;
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-    font-size: 14px;
-    color: #444;
-  }
-  
-  #table-same tbody tr:hover {
-    background-color: #f6f6e1;
-    transition: background-color 0.2s ease-in-out;
-  }
-  
-  #table-same td.text-muted {
-    color: #999;
-    font-style: italic;
-  }
-  
-  /* buttons */
-  .btn-info {
-    background-color: #ff0000;
-    border: none;
-    color: #fff;
-  }
-  .btn-info:hover {
-    background-color: #cc0000;
-  }
-  
-  .btn-warning {
-    background-color: #ffb300;
-    border: none;
-    color: #fff;
-  }
-  .btn-warning:hover {
-    background-color: #ff9500;
-  }
-  
-  .btn-danger {
-    background-color: #780116;
-    border: none;
-  }
-  .btn-danger:hover {
-    background-color: #ff0000;
-  }
-  
-  h2.text-center {
-    font-weight: 700;
-    color: #780116;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-  }
-  </style>
-  
+  </div>
+</template>
+

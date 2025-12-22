@@ -92,16 +92,17 @@
   </script>
   
   <template>
+    
     <div class="container-fluid main-area">
-      <div class="index-card shadow">
-  
-        <!-- Header -->
-        <div
-          class="card-header text-white fw-bold p-2 mb-3 text-center py-3 rounded-top-4"
-          style="background-color: #ff0000"
-        >
-          <h4 class="mb-0">🚌 Add New Bus</h4>
+      <!-- Header Section -->
+      <div class="header-bar">
+          <h2>Add New Bus</h2>
+    
+          <router-link to="/admin/bus/index" class="back-btn">
+            All Buses
+          </router-link>
         </div>
+      <div class="index-card shadow">
   
         <div class="card-body p-4">
   
@@ -246,5 +247,27 @@
     padding: 1rem;
     background-color: var(--bg-color);
   }
+  /* Header */
+  .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+    
+    .header-bar h2 {
+      font-weight: 700;
+      color: var(--second-color);
+    }
+    /* Back Button */
+    .back-btn {
+      padding: 8px 18px;
+      background: var(--second-color);
+      color: var(--bg-color);
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: 0.3s;
+    }
   </style>
   

@@ -2,91 +2,142 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use App\Models\Bus;
 use App\Models\Bustype;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\Models\Route;
+use App\Models\Route as RouteModel; // alias to avoid conflict
 
 class BusController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display all buses (with pagination).
      */
-    public function index()
+    public function index(Request $request)
     {
-        $buses = Bus::all();
-        return view('pages.admin.bus.index', compact('buses'));
+        $perPage = $request->get('per_page', 10);
+
+        $buses = Bus::orderBy('name', 'asc')
+            ->paginate($perPage);
+
+        return response()->json([
+            'status' => 200,
+            'data'   => $buses,
+        ]);
     }
 
-    public function create()
-    {
-        $types = Bustype::get();
-        $routes = Route::orderBy('route_code', 'asc')->get();
-        return view('pages.admin.bus.create', compact('types', 'routes'));
-    }
-
+    /**
+     * Store a newly created bus.
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'coach_no' => 'required|integer',
-            'license' => 'required|string|max:255',
-            'company' => 'required|string|max:255',
-            'bus_type' => 'required|string|max:255',
-            'route' => 'required|string|max:255',
-            'seat_layout' => 'required|string|max:255',
+            'name'          => 'required|string|max:255',
+            'coach_no'      => 'required|integer',
+            'license'       => 'required|string|max:255',
+            'company'       => 'required|string|max:255',
+            'bus_type'      => 'required|string|max:255',
+            'route'         => 'required|string|max:255',
+            'seat_layout'   => 'required|string|max:255',
             'seat_capacity' => 'required|integer',
         ]);
 
-        Bus::create($validated);
+        $bus = Bus::create($validated);
 
-        return redirect()->route('admin.buses.index')->with('success', 'Bus added successfully!');
+        return response()->json([
+            'status'  => 201,
+            'message' => 'Bus added successfully',
+            'data'    => $bus,
+        ], 201);
     }
 
     /**
-     * Display the specified resource.
+     * Display a single bus.
      */
-    public function show(Bus $bus)
+    public function show($id)
     {
-        return view('pages.admin.bus.show', compact('bus'));
+        $bus = Bus::find($id);
+
+        if (!$bus) {
+            return response()->json([
+                'status'  => 404,
+                'message' => 'Bus not found',
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 200,
+            'data'   => $bus,
+        ]);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Update a bus.
      */
-    public function edit(Bus $bus)
+    public function update(Request $request, $id)
     {
-        $types = Bustype::get();
-        $routes = Route::orderBy('route_code', 'asc')->get();
-        return view('pages.admin.bus.edit', compact('bus', 'types', 'routes'));
-    }
+        $bus = Bus::find($id);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Bus $bus)
-    {
+        if (!$bus) {
+            return response()->json([
+                'status'  => 404,
+                'message' => 'Bus not found',
+            ], 404);
+        }
+
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'coach_no' => 'required|integer',
-            'license' => 'required|string|max:255',
-            'company' => 'required|string|max:255',
-            'bus_type' => 'required|string|max:255',
-            'route' => 'required|string|max:255',
-            'seat_layout' => 'required|string|max:255',
+            'name'          => 'required|string|max:255',
+            'coach_no'      => 'required|integer',
+            'license'       => 'required|string|max:255',
+            'company'       => 'required|string|max:255',
+            'bus_type'      => 'required|string|max:255',
+            'route'         => 'required|string|max:255',
+            'seat_layout'   => 'required|string|max:255',
             'seat_capacity' => 'required|integer',
         ]);
+
         $bus->update($validated);
-        return redirect()->route('admin.buses.index')->with('success', 'Bus updated successfully');
+
+        return response()->json([
+            'status'  => 200,
+            'message' => 'Bus updated successfully',
+            'data'    => $bus,
+        ]);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Delete a bus.
      */
-    public function destroy(Bus $bus)
+    public function destroy($id)
     {
+        $bus = Bus::find($id);
+
+        if (!$bus) {
+            return response()->json([
+                'status'  => 404,
+                'message' => 'Bus not found',
+            ], 404);
+        }
+
         $bus->delete();
-        return redirect()->route('admin.buses.index')->with('success', 'Bus deleted successfully');
+
+        return response()->json([
+            'status'  => 200,
+            'message' => 'Bus deleted successfully',
+        ]);
+    }
+
+    /**
+     * Fetch bus types and routes (helper endpoint).
+     */
+    public function meta()
+    {
+        return response()->json([
+            'status' => 200,
+            'data'   => [
+                'types'  => Bustype::orderBy('name')->get(['id', 'name']),
+                'routes' => RouteModel::orderBy('route_code')->get(['id', 'route_code']),
+            ],
+        ]);
     }
 }
