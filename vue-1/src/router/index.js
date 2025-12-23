@@ -27,6 +27,7 @@ import LocationEdit from "../pages/admin/location/LocationEdit.vue";
 import Counter from "../pages/dashboard/Counter.vue";
 import ControllerLayout from "../layouts/ControllerLayout.vue";
 import Controller from "../pages/dashboard/Controller.vue";
+import ScheduleAdd from "../pages/controller/schedule/ScheduleAdd.vue";
 
 // ROUTES
 const routes = [
@@ -75,6 +76,7 @@ const routes = [
     component: ControllerLayout,
     children: [
       { path: "", component: Controller },
+      { path: "schedule/add", name: "addschedule", component: ScheduleAdd },
       
     ],
   },

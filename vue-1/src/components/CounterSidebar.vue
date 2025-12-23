@@ -5,7 +5,7 @@
       <!-- Logo + toggle -->
       <li class="first">
         <span>
-          <RouterLink class="nav-logo" to="/admin">
+          <RouterLink class="nav-logo" to="/counter">
             RunStar
           </RouterLink>
         </span>
@@ -93,14 +93,14 @@ const getIcon = (name) => {
 
 /* Sidebar Menu Items */
 const menuItems = ref([
-  { title: "Dashboard", icon: "dashboard", route: "/manager" },
+  { title: "Dashboard", icon: "dashboard", route: "/counter" },
 
   {
     title: "Bus type",
     icon: "addbus",
     submenu: [
-      { title: "Add Bustype", icon: "bus", route: "/manager/bustype/add" },
-      { title: "All Bustypes", icon: "list", route: "/manager/bustype/index" },
+      { title: "Add Bustype", icon: "bus", route: "/counter" },
+      { title: "All Bustypes", icon: "list", route: "/counter" },
     ],
     showSubmenu: false,
   },
@@ -109,38 +109,18 @@ const menuItems = ref([
     title: "Buses",
     icon: "bus",
     submenu: [
-      { title: "Add New Bus", icon: "addbus", route: "/manager/bus/add" },
-      { title: "All Buses", icon: "list", route: "/manager/bus/index" },
+      { title: "Add New Bus", icon: "addbus", route: "/counter" },
+      { title: "All Buses", icon: "list", route: "/counter" },
     ],
     showSubmenu: false,
   },
-
-  // {
-  //   title: "Drivers",
-  //   icon: "driver",
-  //   submenu: [
-  //     { title: "Add Driver", icon: "driver", route: "/admin" },
-  //     { title: "All Drivers", icon: "list", route: "/admin" },
-  //   ],
-  //   showSubmenu: false,
-  // },
-
-  // {
-  //   title: "Supervisor",
-  //   icon: "supervisor",
-  //   submenu: [
-  //     { title: "Add Supervisor", icon: "supervisor", route: "/admin" },
-  //     { title: "All Supervisors", icon: "list", route: "/admin" },
-  //   ],
-  //   showSubmenu: false,
-  // },
 
   {
     title: "Schedule",
     icon: "schedule",
     submenu: [
-      { title: "Create schedule", icon: "addschedule", route: "/manager" },
-      { title: "All schedules", icon: "list", route: "/manager" },
+      { title: "Create schedule", icon: "addschedule", route: "/counter" },
+      { title: "All schedules", icon: "list", route: "/counter" },
     ],
     showSubmenu: false,
   },
@@ -149,21 +129,21 @@ const menuItems = ref([
     title: "Trips",
     icon: "trip",
     submenu: [
-      { title: "Pending Trips", icon: "pending", route: "/manager" },
-      { title: "Running Trips", icon: "running", route: "/manager" },
-      { title: "Finished Trips", icon: "finish", route: "/manager" },
+      { title: "Pending Trips", icon: "pending", route: "/counter" },
+      { title: "Running Trips", icon: "running", route: "/counter" },
+      { title: "Finished Trips", icon: "finish", route: "/counter" },
     ],
     showSubmenu: false,
   },
 
-  { title: "Bookings", icon: "booking", route: "/manager" },
+  { title: "Bookings", icon: "booking", route: "/counter" },
 
   {
     title: "location",
     icon: "location",
     submenu: [
-      { title: "Add location", icon: "addlocation", route: "/manager/location/add" },
-      { title: "All locations", icon: "list", route: "/manager/location/index" },
+      { title: "Add location", icon: "addlocation", route: "/counter" },
+      { title: "All locations", icon: "list", route: "/counter" },
     ],
     showSubmenu: false,
   },
@@ -172,8 +152,8 @@ const menuItems = ref([
     title: "Route",
     icon: "route",
     submenu: [
-      { title: "Add Route", icon: "addroute", route: "/manager/route/add" },
-      { title: "All Routes", icon: "list", route: "/manager/route/index" },
+      { title: "Add Route", icon: "addroute", route: "/counter" },
+      { title: "All Routes", icon: "list", route: "/counter" },
     ],
     showSubmenu: false,
   },

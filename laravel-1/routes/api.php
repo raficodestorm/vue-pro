@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\Admin\LocationController;
 use App\Http\Controllers\Api\Admin\RouteController;
 use App\Http\Controllers\Api\Admin\BustypeController;
 use App\Http\Controllers\Api\Admin\BusController;
+use App\Http\Controllers\Api\Controller\ScheduleController;
 
 // =========================
 // Public Routes
@@ -67,7 +68,31 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
 // =========================
 // controller Protected Routes
 // =========================
-Route::middleware(['auth:sanctum', 'role:controller'])->group(function () {});
+Route::middleware(['auth:sanctum', 'role:controller'])->group(function () {
+    Route::get('controller/admin/routesfetch', [RouteController::class, 'routesfetch']);
+    Route::get('controller/schedules/', [ScheduleController::class, 'index']);          // list
+    Route::get('controller/schedules/create', [ScheduleController::class, 'create']);   // create form data
+    Route::post('controller/schedules/', [ScheduleController::class, 'store']);         // store
+    Route::get('controller/schedules/{id}', [ScheduleController::class, 'show']);       // show
+    Route::put('controller/schedules/{id}', [ScheduleController::class, 'update']);     // update
+    Route::delete('controller/schedules/{id}', [ScheduleController::class, 'destroy']); // delete
+
+    // Status-based listing
+    Route::get('controller/schedules/status/{status}', [ScheduleController::class, 'byStatus']);
+
+    // Trip status actions
+    Route::post('controller/schedules/{id}/start', [ScheduleController::class, 'start']);
+    Route::post('controller/schedules/{id}/finish', [ScheduleController::class, 'finish']);
+    Route::post('controller/schedules/{id}/pending', [ScheduleController::class, 'pending']);
+
+    // Assignments
+    Route::post('controller/schedules/{id}/assign-driver', [ScheduleController::class, 'assignDriver']);
+    Route::post('controller/schedules/{id}/assign-supervisor', [ScheduleController::class, 'assignSupervisor']);
+
+    // Trip report
+    Route::get('controller/schedules/{id}/report', [ScheduleController::class, 'tripReport']);
+
+});
 
 
 // =========================
