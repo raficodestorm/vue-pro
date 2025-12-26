@@ -31,6 +31,24 @@ class RouteController extends Controller
         ]);
     }
 
+
+    public function showByCode($code)
+    {
+        $route = RouteModel::where('route_code', $code)->first();
+
+        if (!$route) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Route not found',
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 200,
+            'data' => $route,
+        ]);
+    }
+
     /**
      * Store a newly created route.
      */

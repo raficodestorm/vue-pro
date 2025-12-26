@@ -32,10 +32,10 @@ class AdminUserSeeder extends Seeder
                 'updated_at' => $now,
             ],
             [
-                'fullname' => 'Mr. Manager',
-                'username' => 'manager',
+                'fullname' => 'Mr. counter',
+                'username' => 'counter',
                 'email' => 'counter@system.com',
-                'password' => Hash::make('manager12345'),
+                'password' => Hash::make('counter12345'),
                 'role' => 'counter',
                 'status' => 'active',
                 'phone' => '01711111111',

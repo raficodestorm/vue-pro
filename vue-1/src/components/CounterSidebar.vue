@@ -136,7 +136,7 @@ const menuItems = ref([
     showSubmenu: false,
   },
 
-  { title: "Bookings", icon: "booking", route: "/counter" },
+  { title: "Bookings", icon: "booking", route: "/counter/searchbus" },
 
   {
     title: "location",

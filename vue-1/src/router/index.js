@@ -28,6 +28,10 @@ import Counter from "../pages/dashboard/Counter.vue";
 import ControllerLayout from "../layouts/ControllerLayout.vue";
 import Controller from "../pages/dashboard/Controller.vue";
 import ScheduleAdd from "../pages/controller/schedule/ScheduleAdd.vue";
+import ScheduleIndes from "../pages/controller/schedule/ScheduleIndes.vue";
+import ScheduleEdit from "../pages/controller/schedule/ScheduleEdit.vue";
+import SearchBus from "../pages/counter/Booking/SearchBus.vue";
+import BusResult from "../pages/counter/Booking/BusResult.vue";
 
 // ROUTES
 const routes = [
@@ -67,6 +71,8 @@ const routes = [
     component: CounterLayout,
     children: [
       { path: "", component: Counter },
+      { path: "searchbus", name: "searchbus", component: SearchBus },
+      { path: "busResult", name: "busResult", component: BusResult },
       
     ],
   },
@@ -77,6 +83,8 @@ const routes = [
     children: [
       { path: "", component: Controller },
       { path: "schedule/add", name: "addschedule", component: ScheduleAdd },
+      { path: "schedule/index", name: "allschedule", component: ScheduleIndes },
+      { path: "schedule/edit/:id", name: "editschedule", component: ScheduleEdit },
       
     ],
   },

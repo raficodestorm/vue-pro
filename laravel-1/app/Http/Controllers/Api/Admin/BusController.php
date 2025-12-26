@@ -26,6 +26,19 @@ class BusController extends Controller
         ]);
     }
 
+
+
+    public function coachesByType($type)
+    {
+        $coaches = Bus::where('bus_type', $type)
+            ->pluck('coach_no');
+
+        return response()->json([
+            'status' => 200,
+            'data' => $coaches
+        ]);
+    }
+
     /**
      * Store a newly created bus.
      */

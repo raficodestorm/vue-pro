@@ -27,7 +27,7 @@
   
             <div class="col-md-6 mb-3">
               <label class="form-label">Route Code</label>
-              <select class="form-control" v-model="form.route_code" @change="fetchRouteInfo">
+              <select class="form-control" v-model="form.route_code">
                 <option value="">--select route--</option>
                 <option v-for="route in routes" :key="route.id" :value="route.route_code">
                   {{ route.route_code }}
@@ -62,9 +62,9 @@
   
             <div class="col-md-6 mb-3">
               <label class="form-label">Bus Type</label>
-              <select class="form-control" v-model="form.bus_type" @change="fetchCoaches">
+              <select class="form-control" v-model="form.bus_type" @change="fetchTypes">
                 <option value="">--select bus type--</option>
-                <option v-for="type in bustypes" :key="type.id" :value="type.type">
+                <option v-for="type in types" :key="type.id" :value="type.type">
                   {{ type.type }}
                 </option>
               </select>
@@ -98,7 +98,7 @@
   </template>
   
   <script setup>
-  import { ref, onMounted } from "vue";
+  import { ref, onMounted, watch } from "vue";
   import api from "../../../api/axios.js"; 
   import { useRouter } from "vue-router";
   
@@ -109,8 +109,9 @@
   const errors = ref({});
   
   const routes = ref([]);
-  const bustypes = ref([]);
+  const types = ref([]);
   const coaches = ref([]);
+ 
   
   // ================= FORM =================
   const form = ref({
@@ -125,36 +126,59 @@
     bus_type: "",
     coach_no: "",
   });
-  
-  // ================= LOAD INITIAL DATA =================
-  const loadCreateData = async () => {
-    const res = await api.get("/schedules/create");
-    routes.value = res.data.routes;
-    bustypes.value = res.data.bustypes;
-  };
-  
   // ================= ROUTE INFO =================
-  const fetchRouteInfo = async () => {
-    if (!form.value.route_code) return;
-  
-    const res = await api.get(`/routes/info/${form.value.route_code}`);
-    const route = res.data.data;
-  
-    if (route) {
-      form.value.start_location = route.start_location;
-      form.value.end_location = route.end_location;
-      form.value.distance = route.distance;
-      form.value.duration = route.duration;
+  const fetchRoutes = async () => {
+    try {
+      const res = await api.get("/controller/routesfetch");
+      console.log("Routes response:", res.data);
+      routes.value = res.data.data ?? [];
+    } catch (err) {
+      console.error("Failed to fetch routes", err);
     }
   };
-  
-  // ================= COACH SUGGESTION =================
-  const fetchCoaches = async () => {
-    if (!form.value.bus_type) return;
-  
-    const res = await api.get(`/buses/coaches/${form.value.bus_type}`);
-    coaches.value = res.data.data;
+
+  // ================= Fetch BusTypes =================
+  const fetchTypes = async () => {
+    try {
+      const res = await api.get("/controller/typesfetch");
+      types.value = res.data.data ?? [];
+    } catch (err) {
+      console.error("Failed to fetch bus types", err);
+    }
   };
+
+
+  const fetchRouteDetails = async (code) => {
+  if (!code) return;
+
+  try {
+    const res = await api.get(`/controller/routes/${code}`);
+    const route = res.data.data;
+
+    form.value.start_location = route.start_location;
+    form.value.end_location   = route.end_location;
+    form.value.distance       = route.distance;
+    form.value.duration       = route.duration;
+
+  } catch (err) {
+    console.error("Failed to load route info", err);
+  }
+};
+
+
+const fetchCoachesByType = async (type) => {
+  if (!type) {
+    coaches.value = [];
+    return;
+  }
+
+  try {
+    const res = await api.get(`/controller/buses/coach/${type}`);
+    coaches.value = res.data.data ?? [];
+  } catch (err) {
+    console.error("Failed to fetch coaches", err);
+  }
+};
   
   // ================= SUBMIT =================
   const submitForm = async () => {
@@ -162,7 +186,7 @@
     errors.value = {};
   
     try {
-      await api.post("/schedules", form.value);
+      await api.post("/controller/schedules", form.value);
       router.push({ name: "scheduleindex" });
     } catch (e) {
       if (e.response?.status === 422) {
@@ -173,6 +197,23 @@
     }
   };
   
-  onMounted(loadCreateData);
+  // ================= Lifecycle =================
+  onMounted(async () => {
+    await Promise.all([fetchRoutes(), fetchTypes()]);
+  });
+
+  watch(
+  () => form.value.route_code,
+  (newCode) => {
+    fetchRouteDetails(newCode);
+  }
+);
+watch(
+  () => form.value.bus_type,
+  (newType) => {
+    form.value.coach_no = "";  // reset previous selection
+    fetchCoachesByType(newType); // fetch related coach_no from API
+  }
+);
   </script>
   

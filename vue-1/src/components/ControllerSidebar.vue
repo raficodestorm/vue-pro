@@ -120,7 +120,7 @@ const menuItems = ref([
     icon: "schedule",
     submenu: [
       { title: "Create schedule", icon: "addschedule", route: "/controller/schedule/add" },
-      { title: "All schedules", icon: "list", route: "/admin" },
+      { title: "All schedules", icon: "list", route: "/controller/schedule/index" },
     ],
     showSubmenu: false,
   },
