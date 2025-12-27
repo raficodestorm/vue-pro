@@ -21,8 +21,8 @@ class BusSearchController extends Controller
     ]);
 
     $buses = Schedule::where('start_location', $request->from)
-      ->where('end_location', $request->to)
-      ->where('set_date', $request->date)
+      ->where('end_location', trim($request->to))
+      ->whereDate('set_date', trim($request->date))
       ->where('status', 'pending')   // IMPORTANT
       ->orderBy('set_time', 'asc')
       ->get();

@@ -8,7 +8,7 @@
 
       <!-- LOADING -->
       <div v-if="loading" class="text-center mt-5">
-        <p>Loading buses...</p>
+        <p class="loading-text">Searching buses...</p>
       </div>
 
       <!-- NO BUS -->
@@ -17,36 +17,68 @@
       </div>
 
       <!-- BUS LIST -->
-      <div class="row g-4" v-if="buses.length">
+      <div v-if="buses.length" class="bus-list">
         <div
-          class="col-md-6"
           v-for="bus in buses"
           :key="bus.id"
+          class="bus-card"
         >
-          <div class="bus-card">
-            <div class="bus-header">
-              <span class="route">
-                {{ bus.start_location }} → {{ bus.end_location }}
-              </span>
-              <span class="price">
+          <!-- TOP -->
+          <div class="bus-top">
+            <div class="route-box">
+              <span class="city">{{ bus.start_location }}</span>
+
+              <div class="journey-line">
+                <span class="dot"></span>
+                <span class="progress"></span>
+                <span class="dot"></span>
+              </div>
+
+              <span class="city">{{ bus.end_location }}</span>
+            </div>
+
+            <div class="price-box">
+              <div class="price">
                 ৳ {{ bus.price }}
-              </span>
-            </div>
-
-            <div class="bus-body">
-              <p><strong>Date:</strong> {{ bus.set_date }}</p>
-              <p><strong>Time:</strong> {{ bus.set_time }}</p>
-              <p><strong>Bus Type:</strong> {{ bus.bus_type }}</p>
-              <p><strong>Coach No:</strong> {{ bus.coach_no }}</p>
-              <p><strong>Duration:</strong> {{ bus.duration }}</p>
-            </div>
-
-            <div class="bus-footer">
-              <button class="btn btn-book">
-                Book Now
-              </button>
+              </div>
+              
             </div>
           </div>
+
+          <!-- DETAILS (ALWAYS VISIBLE) -->
+          <div class="bus-details">
+            <div class="detail">
+              <strong>Date</strong>
+              <span>{{ bus.set_date }}</span>
+            </div>
+            <div class="detail">
+              <strong>Time</strong>
+              <span>{{ bus.set_time }}</span>
+            </div>
+            <div class="detail">
+              <strong>Duration</strong>
+              <span>{{ bus.duration }}</span>
+            </div>
+            <div class="detail">
+              <strong>Bus Type</strong>
+              <span>{{ bus.bus_type }}</span>
+            </div>
+            <div class="detail">
+              <strong>Coach</strong>
+              <span>{{ bus.coach_no }}</span>
+            </div>
+            <div class="detail">
+              <button
+  type="button"
+  class="btn-book"
+  @click="$router.push({ name: 'SeatReservation', query: { schedule_id: bus.id } })"
+  aria-label="Book seat for this bus"
+>
+  Book Seat
+</button>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -55,15 +87,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRoute } from "vue-router";
 import api from "../../../api/axios.js";
 
 const route = useRoute();
 
-const from = route.query.from;
-const to   = route.query.to;
-const date = route.query.date;
+const from = computed(() => route.query.from);
+const to   = computed(() => route.query.to);
+const date = computed(() => route.query.date);
 
 const loading = ref(false);
 const buses = ref([]);
@@ -74,15 +106,15 @@ const fetchBuses = async () => {
   try {
     const res = await api.get("/counter/search-bus", {
       params: {
-        from,
-        to,
-        date,
+        from: from.value,
+        to: to.value,
+        date: date.value,
       },
     });
 
-    buses.value = res.data.data ?? [];
-  } catch (err) {
-    console.error(err);
+    buses.value = res.data.data || [];
+  } catch (e) {
+    console.error(e);
   } finally {
     loading.value = false;
   }
@@ -92,15 +124,23 @@ onMounted(fetchBuses);
 </script>
 
 <style scoped>
+/* =====================
+   PAGE
+===================== */
 .result-wrapper {
-  padding: 60px 0;
-  background: var(--section-bg-color);
+  padding: 70px 0;
+  background: linear-gradient(180deg, #f6f8ff, #eef2ff);
 }
 
 .result-title {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 45px;
+  font-weight: 600;
   color: var(--second-color);
+}
+
+.loading-text {
+  color: #666;
 }
 
 .no-bus {
@@ -110,49 +150,153 @@ onMounted(fetchBuses);
   color: #777;
 }
 
+/* =====================
+   BUS CARD
+===================== */
+.bus-list {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
 .bus-card {
   background: #fff;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,.08);
-  height: 100%;
+  border-radius: 20px;
+  padding: 22px 28px;
+  box-shadow: 0 18px 45px rgba(0,0,0,0.08);
 }
 
-.bus-header {
+/* =====================
+   TOP ROW
+===================== */
+.bus-top {
   display: flex;
   justify-content: space-between;
-  border-bottom: 1px dashed #ddd;
-  padding-bottom: 10px;
-  margin-bottom: 10px;
+  align-items: center;
 }
 
-.route {
+/* ROUTE */
+.route-box {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.city {
+  font-size: 17px;
   font-weight: 600;
   color: var(--second-color);
 }
 
-.price {
-  font-weight: 600;
-  color: var(--main-color);
+/* JOURNEY LINE */
+.journey-line {
+  position: relative;
+  width: 120px;
+  height: 2px;
+  background: #ddd;
+  overflow: hidden;
 }
 
-.bus-body p {
-  margin: 4px 0;
+.progress {
+  position: absolute;
+  height: 100%;
+  width: 40%;
+  background: linear-gradient(
+    90deg,
+    var(--main-color),
+    var(--second-color)
+  );
+  animation: travel 2.8s linear infinite;
 }
 
-.bus-footer {
+.dot {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 9px;
+  height: 9px;
+  background: var(--main-color);
+  border-radius: 50%;
+}
+
+.dot:first-child { left: -4px; }
+.dot:last-child  { right: -4px; }
+
+/* ACTION */
+.price-box {
   text-align: right;
-  margin-top: 15px;
+}
+
+.price {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--second-color);
+  margin-bottom: 6px;
 }
 
 .btn-book {
-  background: var(--main-color);
+  background: linear-gradient(135deg, var(--main-color), var(--second-color));
   color: #fff;
-  padding: 6px 20px;
-  border-radius: 20px;
+  border: none;
+  padding: 5px 25px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 10px;
+  float: right;
 }
 
-.btn-book:hover {
-  background: var(--second-color);
+/* =====================
+   DETAILS
+===================== */
+.bus-details {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 20px;
+  margin-top: 22px;
+  border-top: 1px dashed #ddd;
+  padding-top: 18px;
+}
+
+.detail strong {
+  display: block;
+  font-size: 12px;
+  color: #999;
+}
+
+.detail span {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* =====================
+   ANIMATION
+===================== */
+@keyframes travel {
+  0%   { left: -40%; }
+  100% { left: 100%; }
+}
+
+
+/* =====================
+   RESPONSIVE
+===================== */
+@media (max-width: 768px) {
+  .bus-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .price-box {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .bus-details {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 </style>

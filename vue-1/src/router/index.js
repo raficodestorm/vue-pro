@@ -32,6 +32,7 @@ import ScheduleIndes from "../pages/controller/schedule/ScheduleIndes.vue";
 import ScheduleEdit from "../pages/controller/schedule/ScheduleEdit.vue";
 import SearchBus from "../pages/counter/Booking/SearchBus.vue";
 import BusResult from "../pages/counter/Booking/BusResult.vue";
+import SeatReservation from "../pages/counter/Booking/SeatReservation.vue";
 
 // ROUTES
 const routes = [
@@ -73,6 +74,7 @@ const routes = [
       { path: "", component: Counter },
       { path: "searchbus", name: "searchbus", component: SearchBus },
       { path: "busResult", name: "busResult", component: BusResult },
+      { path: "SeatReservation", name: "SeatReservation", component: SeatReservation },
       
     ],
   },

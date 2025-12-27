@@ -8,24 +8,22 @@
 
           <div class="col-md-4">
             <label class="form-label">From</label>
-            <input
-              type="text"
-              v-model="form.from"
-              class="form-control"
-              placeholder="Starting location"
-              required
-            />
+            <select v-model="form.from" class="form-select">
+            <option value="">-- Select Start Location --</option>
+            <option v-for="loc in locations" :key="loc.id" :value="loc.district">
+              {{ loc.district }}
+            </option>
+          </select>
           </div>
 
           <div class="col-md-4">
             <label class="form-label">To</label>
-            <input
-              type="text"
-              v-model="form.to"
-              class="form-control"
-              placeholder="Destination"
-              required
-            />
+            <select v-model="form.to" class="form-select">
+            <option value="">-- Select end Location --</option>
+            <option v-for="loc in locations" :key="loc.id" :value="loc.district">
+              {{ loc.district }}
+            </option>
+          </select>
           </div>
 
           <div class="col-md-4">
@@ -51,10 +49,13 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import api from "../../../api/axios.js";
 
 const router = useRouter();
+// dropdown
+const locations = ref([]);
 
 const form = ref({
   from: "",
@@ -72,6 +73,21 @@ const handleSearch = () => {
     },
   });
 };
+
+// fetch locations
+const fetchLocations = async () => {
+  try {
+    const res = await api.get("counter/locationfetch");
+    locations.value = res.data.data;
+  } catch (error) {
+    console.error("Failed to fetch locations", error);
+  }
+};
+
+onMounted(() => {
+  fetchLocations();
+});
+
 </script>
 
 <style scoped>

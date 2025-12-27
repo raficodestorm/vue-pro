@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Controller;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Schedule;
+use App\Models\Bus;
 
 class ScheduleController extends Controller
 {
@@ -50,6 +51,21 @@ class ScheduleController extends Controller
             'data'    => $schedule,
         ], 201);
     }
+
+    public function ReservationData($id)
+{
+    $schedule = Schedule::with('bus')->findOrFail($id);
+
+    return response()->json([
+        'status' => 200,
+        'data' => [
+            'schedule' => $schedule,
+            'seatLayout' => $schedule->bus->seat_layout ?? '2:2',
+            'seatCapacity' => $schedule->bus->seat_capacity ?? 40,
+        ]
+    ]);
+}
+
 
     /**
      * Display a single route.

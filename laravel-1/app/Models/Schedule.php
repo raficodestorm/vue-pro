@@ -26,7 +26,7 @@ class Schedule extends Model
     ];
     public function bus()
     {
-        return $this->belongsTo(Bus::class, 'coach_no', 'coach_no');
+        return $this->belongsTo(Bus::class);
     }
     public function driver()
     {
