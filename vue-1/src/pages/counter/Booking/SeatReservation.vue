@@ -1,232 +1,233 @@
 <template>
-    <div class="seat-reservation container">
-      <div class="row">
-        <!-- LEFT SIDE - Seat Layout -->
-        <div class="col-md-6">
-          <div class="legend">
-            <span class="seat soldM">Booked</span>
-            <span class="seat blocked">Blocked</span>
-            <span class="seat available">Available</span>
-            <span class="seat selected">Selected</span>
-          </div>
-  
-          <div class="bus-container" v-if="scheduleLoaded">
-            <!-- Top row: Door + Driver -->
-            <div class="bus-front">
-              <div class="door">Door</div>
-              <div class="driver" @click="playHorn" style="cursor:pointer;">
-                <svg xmlns="http://www.w3.org/2000/svg" height="35px" viewBox="0 -960 960 960" width="35px">
-                  <path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-40-84v-120q-60-12-102-54t-54-102H164q12 109 89.5 185T440-164Zm80 0q109-12 186.5-89.5T796-440H676q-12 60-54 102t-102 54v120ZM164-520h116l120-120h160l120 120h116q-15-121-105-200.5T480-800q-121 0-211 79.5T164-520Z"/>
-                </svg>
-              </div>
-            </div>
-  
-            <!-- Seat Layout -->
-            <div class="seats">
-              <div v-for="(row, rowIndex) in seatRows" :key="rowIndex" class="seat-row">
-                <div v-for="seat in row.left" :key="seat.id" class="seat"
-                     :class="seatClass(seat)"
-                     @click="toggleSeat(seat)">
-                  {{ seat.id }}
-                </div>
-                <div class="aisle"></div>
-                <div v-for="seat in row.right" :key="seat.id" class="seat"
-                     :class="seatClass(seat)"
-                     @click="toggleSeat(seat)">
-                  {{ seat.id }}
-                </div>
-              </div>
-            </div>
-  
-            <!-- Footer -->
-            <div class="summary">
-              <h4>Selected Seats:</h4>
-              <p>{{ selectedSeats.length ? selectedSeats.join(', ') : 'None' }}</p>
-            </div>
-          </div>
-          <div v-else class="text-center mt-5">Loading seat info...</div>
+  <div class="seat-reservation container">
+    <div class="row">
+
+      <!-- LEFT SIDE -->
+      <div class="col-md-6">
+        <div class="legend">
+          <span class="seat soldM">Booked</span>
+          <span class="seat blocked">Blocked</span>
+          <span class="seat available">Available</span>
+          <span class="seat selected">Selected</span>
         </div>
-  
-        <!-- RIGHT SIDE - Reservation Form -->
-        <div class="col-md-6" v-if="scheduleLoaded">
-          <div class="reservation-form">
-            <form @submit.prevent="submitReservation">
-              <input type="hidden" name="schedule_id" :value="schedule.id">
-  
-              <h4 class="mb-3 text-center" style="color:#780116;">BUS INFORMATION</h4>
-              <div class="ticket-card p-3 mb-3">
-                <p class="inline"><strong>Bus type:</strong></p>
-                <input class="hidein" type="text" :value="schedule.bus_type" readonly><br>
-  
-                <p class="inline"><strong>Coach No:</strong></p>
-                <input class="hidein" type="text" :value="schedule.coach_no" readonly><br>
-  
-                <p class="inline"><strong>Route:</strong></p>
-                <input class="hidein" type="text" :value="`${schedule.start_location} to ${schedule.end_location}`" readonly><br>
-  
-                <p class="inline"><strong>Fare per Seat: ৳</strong></p>
-                <input class="hidein" type="text" :value="schedule.price.toFixed(2)" readonly><br>
-  
-                <p class="inline"><strong>Departure:</strong></p>
-                <input class="hidein" type="text" v-model="departureTime" readonly><br>
-  
-                <p class="inline"><strong>Boarding point:</strong></p>
-                <select v-model="selectedBoarding" @change="updateDeparture" required>
-                  <option value="">Select boarding point</option>
-                  <option v-for="board in boardingCounters" :key="board.id" :value="board.name" :data-distance="board.distance">
-                    {{ board.name }}
-                  </option>
-                </select>
-  
-                <p class="inline"><strong>Dropping point:</strong></p>
-                <select v-model="selectedDropping" required>
-                  <option value="">Select dropping point</option>
-                  <option v-for="drop in droppingCounters" :key="drop.id" :value="drop.name">
-                    {{ drop.name }}
-                  </option>
-                </select>
-              </div>
-  
-              <h4>SEAT INFORMATION:</h4>
-              <span>Selected Seats:</span>
-              <input type="text" :value="selectedSeats.join(', ')" readonly>
-  
-              <span>Total amount:</span>
-              <input type="text" :value="totalAmount" readonly>
-  
-              <input type="text" v-model="customerName" placeholder="Your Name*" required>
-              <input type="text" v-model="customerMobile" placeholder="Mobile Number*" required>
-  
-              <button type="submit" class="submit-btn" @click="playHorn" style="cursor:pointer;">
-                SUBMIT
-              </button>
-            </form>
+
+        <div class="bus-container" v-if="scheduleLoaded">
+          <!-- Front -->
+          <div class="bus-front">
+            <div class="door">Door</div>
+            <div class="driver" @click="playHorn" style="cursor:pointer;">
+              <svg xmlns="http://www.w3.org/2000/svg" height="35px" viewBox="0 -960 960 960" width="35px">
+                <path
+                  d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z" />
+              </svg>
+            </div>
           </div>
+
+          <!-- Seats -->
+          <div class="seats">
+            <div
+              v-for="(row, rowIndex) in seatRows"
+              :key="rowIndex"
+              class="seat-row"
+            >
+              <div
+                v-for="seat in row.left"
+                :key="seat.id"
+                class="seat"
+                :class="seatClass(seat)"
+                @click="toggleSeat(seat)"
+              >
+                {{ seat.id }}
+              </div>
+
+              <div class="aisle"></div>
+
+              <div
+                v-for="seat in row.right"
+                :key="seat.id"
+                class="seat"
+                :class="seatClass(seat)"
+                @click="toggleSeat(seat)"
+              >
+                {{ seat.id }}
+              </div>
+            </div>
+          </div>
+
+          <div class="summary">
+            <h4>Selected Seats</h4>
+            <p>{{ selectedSeats.length ? selectedSeats.join(', ') : 'None' }}</p>
+          </div>
+        </div>
+
+        <div v-else class="text-center mt-5">
+          Loading seat info...
         </div>
       </div>
+
+      <!-- RIGHT SIDE -->
+      <div class="col-md-6" v-if="scheduleLoaded">
+        <div class="reservation-form">
+          <form @submit.prevent="submitReservation">
+
+            <h4 class="text-center mb-3" style="color:#780116;">BUS INFORMATION</h4>
+
+            <div class="ticket-card p-3 mb-3">
+              <p><strong>Bus type:</strong> {{ schedule.bus_type }}</p>
+              <p><strong>Coach No:</strong> {{ schedule.coach_no }}</p>
+              <p><strong>Route:</strong> {{ schedule.start_location }} → {{ schedule.end_location }}</p>
+              <p><strong>Fare per Seat:</strong> ৳ {{ Number(schedule.price).toFixed(2) }}</p>
+              <p><strong>Departure:</strong> {{ departureTime }}</p>
+            </div>
+
+            <h4>SEAT INFORMATION</h4>
+
+            <input type="text" :value="selectedSeats.join(', ')" readonly />
+            <input type="text" :value="totalAmount" readonly />
+
+            <input v-model="customerName" placeholder="Your Name*" required />
+            <input v-model="customerMobile" placeholder="Mobile Number*" required />
+
+            <button type="submit" class="submit-btn" @click="playHorn">
+              SUBMIT
+            </button>
+
+          </form>
+        </div>
+      </div>
+
     </div>
-  </template>
-  
-  <script setup>
-  import { ref, reactive, computed, onMounted } from 'vue'
-  import api from '../../../api/axios.js' // your axios instance
-  
-  // ---------- Reactive state ----------
-  const schedule = reactive({})
-  const seatRows = ref([])
-  const selectedSeats = ref([])
-  const boardingCounters = ref([])
-  const droppingCounters = ref([])
-  const selectedBoarding = ref('')
-  const selectedDropping = ref('')
-  const customerName = ref('')
-  const customerMobile = ref('')
-  const departureTime = ref('')
-  const seatLayout = ref('')
-  const seatCapacity = ref(0)
-  const busType = ref('')
-  const bookedSeats = ref([])
-  const scheduleLoaded = ref(false)
-  
-  const totalAmount = computed(() => selectedSeats.value.length * schedule.price)
-  
-  // ---------- Methods ----------
-  async function fetchSchedule(schedule_id) {
-    try {
-      const res = await api.get(`counter/schedules/${schedule_id}`)
-      const data = res.data.data
-      // Fill reactive state
-      Object.assign(schedule, data.schedule)
-      seatLayout.value = data.seatLayout
-      seatCapacity.value = data.seatCapacity
-      busType.value = data.schedule.bus_type.toLowerCase()
-      departureTime.value = schedule.set_time
-      generateSeats()
-      scheduleLoaded.value = true
-    } catch (err) {
-      console.error(err)
+  </div>
+</template>
+
+<script setup>
+import { ref, reactive, computed, onMounted } from 'vue'
+import api from '../../../api/axios.js'
+
+/* ---------------- STATE ---------------- */
+const schedule = reactive({})
+const seatRows = ref([])
+const selectedSeats = ref([])
+const seatLayout = ref('')
+const seatCapacity = ref(0)
+const bookedSeats = ref([])
+
+const customerName = ref('')
+const customerMobile = ref('')
+const departureTime = ref('')
+const scheduleLoaded = ref(false)
+
+/* ---------------- COMPUTED ---------------- */
+const totalAmount = computed(() =>
+  selectedSeats.value.length * (schedule.price || 0)
+)
+
+/* ---------------- FETCH ---------------- */
+async function fetchSchedule(schedule_id) {
+  try {
+    const res = await api.get(`counter/schedules/${schedule_id}`)
+    const data = res.data.data || res.data
+
+    if (!data?.schedule) {
+      console.error('Invalid API response', data)
+      return
     }
+
+    Object.assign(schedule, {
+      ...data.schedule,
+      price: Number(data.schedule.price) || 0
+    })
+
+    seatLayout.value = data.seatLayout
+    seatCapacity.value = data.seatCapacity
+    bookedSeats.value = data.bookedSeats || []
+
+    departureTime.value = schedule.set_time
+    generateSeats()
+  } catch (error) {
+    console.error('Schedule fetch failed:', error)
+  } finally {
+    scheduleLoaded.value = true
   }
-  
-  // Generate seat rows
-  function generateSeats() {
-    const [leftCount, rightCount] = seatLayout.value.split(':').map(Number)
-    const seatsPerRow = leftCount + rightCount
-    const totalRows = Math.ceil(seatCapacity.value / seatsPerRow)
-    const rows = []
-    let seatNumber = 1
-    const startLetter = 'A'.charCodeAt(0)
-  
-    for (let r = 0; r < totalRows; r++) {
-      const rowLetter = String.fromCharCode(startLetter + r)
-      const left = []
-      const right = []
-  
-      for (let i = 0; i < leftCount && seatNumber <= seatCapacity.value; i++) {
-        left.push({ id: `${rowLetter}${seatNumber}`, booked: bookedSeats.value.includes(`${rowLetter}${seatNumber}`) })
-        seatNumber++
-      }
-      for (let i = 0; i < rightCount && seatNumber <= seatCapacity.value; i++) {
-        right.push({ id: `${rowLetter}${seatNumber}`, booked: bookedSeats.value.includes(`${rowLetter}${seatNumber}`) })
-        seatNumber++
-      }
-      rows.push({ left, right })
+}
+
+/* ---------------- SEAT GENERATION ---------------- */
+function generateSeats() {
+  if (!seatLayout.value || !seatCapacity.value) return
+
+  const [leftCount, rightCount] = seatLayout.value.split(':').map(Number)
+  const seatsPerRow = leftCount + rightCount
+  const totalRows = Math.ceil(seatCapacity.value / seatsPerRow)
+
+  const rows = []
+  let seatNo = 1
+  const startLetter = 'A'.charCodeAt(0)
+
+  for (let r = 0; r < totalRows; r++) {
+    const rowLetter = String.fromCharCode(startLetter + r)
+    const left = []
+    const right = []
+
+    for (let i = 0; i < leftCount && seatNo <= seatCapacity.value; i++) {
+      left.push({
+        id: `${rowLetter}${seatNo}`,
+        booked: bookedSeats.value.includes(`${rowLetter}${seatNo}`)
+      })
+      seatNo++
     }
-    seatRows.value = rows
-  }
-  
-  // Seat CSS class
-  function seatClass(seat) {
-    if (seat.booked) return 'soldM'
-    if (selectedSeats.value.includes(seat.id)) return 'selected'
-    return 'available'
-  }
-  
-  // Toggle seat selection
-  function toggleSeat(seat) {
-    if (seat.booked) return
-    const index = selectedSeats.value.indexOf(seat.id)
-    if (index > -1) selectedSeats.value.splice(index, 1)
-    else selectedSeats.value.push(seat.id)
-  }
-  
-  // Update departure time based on boarding distance
-  function updateDeparture() {
-    const selected = boardingCounters.value.find(b => b.name === selectedBoarding.value)
-    const distance = selected ? Number(selected.distance) : 0
-    const base = new Date(`1970-01-01T${schedule.set_time}:00`)
-    base.setMinutes(base.getMinutes() + distance)
-    departureTime.value = base.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })
-  }
-  
-  // Optional horn sound
-  function playHorn() {
-    const audio = new Audio('/sound/horn.m4a')
-    audio.play()
-  }
-  
-  // Submit reservation
-  function submitReservation() {
-    const payload = {
-      schedule_id: schedule.id,
-      selected_seats: selectedSeats.value,
-      total: totalAmount.value,
-      name: customerName.value,
-      mobile: customerMobile.value,
-      boarding: selectedBoarding.value,
-      dropping: selectedDropping.value
+
+    for (let i = 0; i < rightCount && seatNo <= seatCapacity.value; i++) {
+      right.push({
+        id: `${rowLetter}${seatNo}`,
+        booked: bookedSeats.value.includes(`${rowLetter}${seatNo}`)
+      })
+      seatNo++
     }
-    console.log('Reservation payload:', payload)
-    alert('Reservation submitted! (Check console)')
+
+    rows.push({ left, right })
   }
-  
-  // On mounted
-  onMounted(() => {
-    const urlParams = new URLSearchParams(window.location.search)
-    const schedule_id = urlParams.get('schedule_id')
-    if (schedule_id) fetchSchedule(schedule_id)
+
+  seatRows.value = rows
+}
+
+/* ---------------- UI LOGIC ---------------- */
+function seatClass(seat) {
+  if (seat.booked) return 'soldM'
+  if (selectedSeats.value.includes(seat.id)) return 'selected'
+  return 'available'
+}
+
+function toggleSeat(seat) {
+  if (seat.booked) return
+  const index = selectedSeats.value.indexOf(seat.id)
+  index > -1
+    ? selectedSeats.value.splice(index, 1)
+    : selectedSeats.value.push(seat.id)
+}
+
+function playHorn() {
+  new Audio('/sound/horn.m4a').play()
+}
+
+/* ---------------- SUBMIT ---------------- */
+function submitReservation() {
+  console.log({
+    schedule_id: schedule.id,
+    seats: selectedSeats.value,
+    total: totalAmount.value,
+    name: customerName.value,
+    mobile: customerMobile.value
   })
-  </script>
+
+  alert('Reservation submitted! (check console)')
+}
+
+/* ---------------- MOUNT ---------------- */
+onMounted(() => {
+  const id = new URLSearchParams(window.location.search).get('schedule_id')
+  if (id) fetchSchedule(id)
+})
+</script>
   
   
   <style scoped>
