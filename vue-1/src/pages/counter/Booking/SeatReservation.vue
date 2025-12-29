@@ -78,15 +78,49 @@
               <p><strong>Route:</strong> {{ schedule.start_location }} → {{ schedule.end_location }}</p>
               <p><strong>Fare per Seat:</strong> ৳ {{ Number(schedule.price).toFixed(2) }}</p>
               <p><strong>Departure:</strong> {{ departureTime }}</p>
+
+              <p class="inline"><strong>Bus type:</strong></p>
+            <input class="hidein" type="text" v-model="bus_type" value="{{ $schedule->bus_type }}" readonly><br>
+            <p class="inline"><strong>Coach No:</strong></p>
+            <input class="hidein" type="text" v-model="coach_no" value="{{ $schedule->coach_no }}" readonly><br>
+            <p class="inline"><strong>Route:</strong></p>
+            <input class="hidein" type="text" v-model="route"
+              value="{{ $schedule->start_location }} to {{ $schedule->end_location }}" readonly> <br>
+
+            <p class="inline"><strong>Fare per Seat: ৳</strong></p>
+            <input class="hidein" type="text" v-model="seat_price" value="{{ number_format($schedule->price, 2) }}"
+              readonly> <br>
+            <p class="inline"><strong>Departure:</strong></p>
+            <input class="hidein" type="text" id="departure" v-model="departure"
+              value="{{ date('H:i', strtotime($schedule->set_time)) }}" readonly><br>
+
+            <p class="inline"><strong>Boarding point:</strong></p>
+            <select id="boarding" v-model="boarding" required>
+              <option value="">Select boarding point</option>
+              @foreach($boardingCounters as $boardcounter)
+              <option value="{{ $boardcounter->name }}" data-distance="{{ $boardcounter->distance }}">
+                {{ $boardcounter->name }}
+              </option>
+              @endforeach
+            </select>
+
+            <p class="inline"><strong>Dropping point:</strong></p>
+            <select v-model="dropping" required>
+              <option value="">Select dropping point</option>
+              
+              <option value="{{ $dropcounter->name }}">
+                {{ $dropcounter->name }}
+              </option>
+              
             </div>
 
             <h4>SEAT INFORMATION</h4>
 
-            <input type="text" :value="selectedSeats.join(', ')" readonly />
-            <input type="text" :value="totalAmount" readonly />
+            <input type="text" v-model="selected_seats" :value="selectedSeats.join(', ')" readonly />
+            <input type="text" v-model="total" :value="totalAmount" readonly />
 
-            <input v-model="customerName" placeholder="Your Name*" required />
-            <input v-model="customerMobile" placeholder="Mobile Number*" required />
+            <input v-model="name" placeholder="Your Name*" required />
+            <input v-model="mobile" placeholder="Mobile Number*" required />
 
             <button type="submit" class="submit-btn" @click="playHorn">
               SUBMIT
@@ -112,8 +146,20 @@ const seatLayout = ref('')
 const seatCapacity = ref(0)
 const bookedSeats = ref([])
 
-const customerName = ref('')
-const customerMobile = ref('')
+const form = ref({
+    schedule_id: "",
+    bus_type: "",
+    coach_no: "",
+    route: "",
+    seat_price: "",
+    departure: "",
+    boarding: "",
+    dropping: "",
+    selected_seats: "",
+    total: "",
+    name: "",
+    mobile: "",
+  });
 const departureTime = ref('')
 const scheduleLoaded = ref(false)
 
@@ -210,17 +256,22 @@ function playHorn() {
 }
 
 /* ---------------- SUBMIT ---------------- */
-function submitReservation() {
-  console.log({
-    schedule_id: schedule.id,
-    seats: selectedSeats.value,
-    total: totalAmount.value,
-    name: customerName.value,
-    mobile: customerMobile.value
-  })
 
-  alert('Reservation submitted! (check console)')
-}
+const submitReservation = async () => {
+    loading.value = true;
+    errors.value = {};
+  
+    try {
+      await api.post("/controller/seatreservation", form.value);
+      router.push({ name: "payment" });
+    } catch (e) {
+      if (e.response?.status === 422) {
+        errors.value = e.response.data.errors;
+      }
+    } finally {
+      loading.value = false;
+    }
+  };
 
 /* ---------------- MOUNT ---------------- */
 onMounted(() => {

@@ -92,6 +92,8 @@ Route::middleware(['auth:sanctum', 'role:counter'])->group(function () {
     Route::get('counter/search-bus', [BusSearchController::class, 'search']);
     Route::get('counter/locationfetch', [LocationController::class, 'locationfetch']);
     Route::get('counter/schedules/{id}', [ScheduleController::class, 'ReservationData']);
+
+    Route::get('counter/seatreservatio', [ScheduleController::class, 'ReservationData']);
 });
 
 // =========================
