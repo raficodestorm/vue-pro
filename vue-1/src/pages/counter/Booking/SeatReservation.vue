@@ -25,11 +25,7 @@
 
           <!-- Seats -->
           <div class="seats">
-            <div
-              v-for="(row, rowIndex) in seatRows"
-              :key="rowIndex"
-              class="seat-row"
-            >
+            <div v-for="(row, rowIndex) in seatRows" :key="rowIndex" class="seat-row">
               <div
                 v-for="seat in row.left"
                 :key="seat.id"
@@ -73,54 +69,43 @@
             <h4 class="text-center mb-3" style="color:#780116;">BUS INFORMATION</h4>
 
             <div class="ticket-card p-3 mb-3">
-              <p><strong>Bus type:</strong> {{ schedule.bus_type }}</p>
-              <p><strong>Coach No:</strong> {{ schedule.coach_no }}</p>
-              <p><strong>Route:</strong> {{ schedule.start_location }} → {{ schedule.end_location }}</p>
-              <p><strong>Fare per Seat:</strong> ৳ {{ Number(schedule.price).toFixed(2) }}</p>
-              <p><strong>Departure:</strong> {{ departureTime }}</p>
-
               <p class="inline"><strong>Bus type:</strong></p>
-            <input class="hidein" type="text" v-model="bus_type" value="{{ $schedule->bus_type }}" readonly><br>
-            <p class="inline"><strong>Coach No:</strong></p>
-            <input class="hidein" type="text" v-model="coach_no" value="{{ $schedule->coach_no }}" readonly><br>
-            <p class="inline"><strong>Route:</strong></p>
-            <input class="hidein" type="text" v-model="route"
-              value="{{ $schedule->start_location }} to {{ $schedule->end_location }}" readonly> <br>
+              <input class="hidein" type="text" v-model="form.bus_type" readonly><br>
 
-            <p class="inline"><strong>Fare per Seat: ৳</strong></p>
-            <input class="hidein" type="text" v-model="seat_price" value="{{ number_format($schedule->price, 2) }}"
-              readonly> <br>
-            <p class="inline"><strong>Departure:</strong></p>
-            <input class="hidein" type="text" id="departure" v-model="departure"
-              value="{{ date('H:i', strtotime($schedule->set_time)) }}" readonly><br>
+              <p class="inline"><strong>Coach No:</strong></p>
+              <input class="hidein" type="text" v-model="form.coach_no" readonly><br>
 
-            <p class="inline"><strong>Boarding point:</strong></p>
-            <select id="boarding" v-model="boarding" required>
-              <option value="">Select boarding point</option>
-              @foreach($boardingCounters as $boardcounter)
-              <option value="{{ $boardcounter->name }}" data-distance="{{ $boardcounter->distance }}">
-                {{ $boardcounter->name }}
-              </option>
-              @endforeach
-            </select>
+              <p class="inline"><strong>Route:</strong></p>
+              <input class="hidein" type="text" v-model="form.route" readonly><br>
 
-            <p class="inline"><strong>Dropping point:</strong></p>
-            <select v-model="dropping" required>
-              <option value="">Select dropping point</option>
-              
-              <option value="{{ $dropcounter->name }}">
-                {{ $dropcounter->name }}
-              </option>
-              
+              <p class="inline"><strong>Fare per Seat: ৳</strong></p>
+              <input class="hidein" type="text" v-model="form.seat_price" readonly><br>
+
+              <p class="inline"><strong>Departure:</strong></p>
+              <input class="hidein" type="text" :value="formattedDeparture" readonly><br>
+
+              <p class="inline"><strong>Boarding point:</strong></p>
+              <select v-model="form.boarding" required>
+                <option value="">Select boarding point</option>
+                <option>Counter A</option>
+                <option>Counter B</option>
+              </select>
+
+              <p class="inline"><strong>Dropping point:</strong></p>
+              <select v-model="form.dropping" required>
+                <option value="">Select dropping point</option>
+                <option>Stop X</option>
+                <option>Stop Y</option>
+              </select>
             </div>
 
             <h4>SEAT INFORMATION</h4>
 
-            <input type="text" v-model="selected_seats" :value="selectedSeats.join(', ')" readonly />
-            <input type="text" v-model="total" :value="totalAmount" readonly />
+            <input type="text" v-model="form.selected_seats" readonly />
+            <input type="text" v-model="form.total" readonly />
 
-            <input v-model="name" placeholder="Your Name*" required />
-            <input v-model="mobile" placeholder="Mobile Number*" required />
+            <input v-model="form.name" placeholder="Your Name*" required />
+            <input v-model="form.mobile" placeholder="Mobile Number*" required />
 
             <button type="submit" class="submit-btn" @click="playHorn">
               SUBMIT
@@ -134,19 +119,23 @@
   </div>
 </template>
 
+
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
-import api from '../../../api/axios.js'
-
-/* ---------------- STATE ---------------- */
-const schedule = reactive({})
-const seatRows = ref([])
-const selectedSeats = ref([])
-const seatLayout = ref('')
-const seatCapacity = ref(0)
-const bookedSeats = ref([])
-
-const form = ref({
+  import { ref, reactive, computed, onMounted, watch } from 'vue'
+  import { useRouter } from 'vue-router'
+  import api from '../../../api/axios.js'
+  
+  const router = useRouter()
+  
+  const schedule = reactive({})
+  const seatRows = ref([])
+  const selectedSeats = ref([])
+  const bookedSeats = ref([])
+  const scheduleLoaded = ref(false)
+  const loading = ref(false)
+  const errors = ref({})
+  
+  const form = reactive({
     schedule_id: "",
     bus_type: "",
     coach_no: "",
@@ -159,126 +148,99 @@ const form = ref({
     total: "",
     name: "",
     mobile: "",
-  });
-const departureTime = ref('')
-const scheduleLoaded = ref(false)
-
-/* ---------------- COMPUTED ---------------- */
-const totalAmount = computed(() =>
-  selectedSeats.value.length * (schedule.price || 0)
-)
-
-/* ---------------- FETCH ---------------- */
-async function fetchSchedule(schedule_id) {
-  try {
+  })
+  
+  const totalAmount = computed(() =>
+    selectedSeats.value.length * (schedule.price || 0)
+  )
+  
+  watch(selectedSeats, () => {
+    form.selected_seats = selectedSeats.value.join(', ')
+    form.total = totalAmount.value
+  })
+  
+  async function fetchSchedule(schedule_id) {
     const res = await api.get(`counter/schedules/${schedule_id}`)
-    const data = res.data.data || res.data
-
-    if (!data?.schedule) {
-      console.error('Invalid API response', data)
-      return
-    }
-
-    Object.assign(schedule, {
-      ...data.schedule,
-      price: Number(data.schedule.price) || 0
-    })
-
-    seatLayout.value = data.seatLayout
-    seatCapacity.value = data.seatCapacity
+    const data = res.data.data
+  
+    Object.assign(schedule, data.schedule)
     bookedSeats.value = data.bookedSeats || []
-
-    departureTime.value = schedule.set_time
-    generateSeats()
-  } catch (error) {
-    console.error('Schedule fetch failed:', error)
-  } finally {
+  
+    form.schedule_id = schedule.id
+    form.bus_type = schedule.bus_type
+    form.coach_no = schedule.coach_no
+    form.route = `${schedule.start_location} → ${schedule.end_location}`
+    form.seat_price = schedule.price
+    form.departure = schedule.set_time
+  
+    generateSeats(data.seatLayout, data.seatCapacity)
     scheduleLoaded.value = true
   }
-}
-
-/* ---------------- SEAT GENERATION ---------------- */
-function generateSeats() {
-  if (!seatLayout.value || !seatCapacity.value) return
-
-  const [leftCount, rightCount] = seatLayout.value.split(':').map(Number)
-  const seatsPerRow = leftCount + rightCount
-  const totalRows = Math.ceil(seatCapacity.value / seatsPerRow)
-
-  const rows = []
-  let seatNo = 1
-  const startLetter = 'A'.charCodeAt(0)
-
-  for (let r = 0; r < totalRows; r++) {
-    const rowLetter = String.fromCharCode(startLetter + r)
-    const left = []
-    const right = []
-
-    for (let i = 0; i < leftCount && seatNo <= seatCapacity.value; i++) {
-      left.push({
-        id: `${rowLetter}${seatNo}`,
-        booked: bookedSeats.value.includes(`${rowLetter}${seatNo}`)
+  
+  function generateSeats(layout, capacity) {
+    const [L, R] = layout.split(':').map(Number)
+    const rows = Math.ceil(capacity / (L + R))
+    let seatNo = 1
+    seatRows.value = []
+  
+    for (let r = 0; r < rows; r++) {
+      const rowLetter = String.fromCharCode(65 + r)
+      seatRows.value.push({
+        left: Array.from({ length: L }, () => makeSeat(rowLetter, seatNo++)),
+        right: Array.from({ length: R }, () => makeSeat(rowLetter, seatNo++)),
       })
-      seatNo++
     }
-
-    for (let i = 0; i < rightCount && seatNo <= seatCapacity.value; i++) {
-      right.push({
-        id: `${rowLetter}${seatNo}`,
-        booked: bookedSeats.value.includes(`${rowLetter}${seatNo}`)
-      })
-      seatNo++
+  }
+  
+  function makeSeat(row, no) {
+    const id = `${row}${no}`
+    return { id, booked: bookedSeats.value.includes(id) }
+  }
+  
+  function seatClass(seat) {
+    if (seat.booked) return 'soldM'
+    if (selectedSeats.value.includes(seat.id)) return 'selected'
+    return 'available'
+  }
+  
+  function toggleSeat(seat) {
+    if (seat.booked) return
+    const i = selectedSeats.value.indexOf(seat.id)
+    i > -1 ? selectedSeats.value.splice(i, 1) : selectedSeats.value.push(seat.id)
+  }
+  
+  function playHorn() {
+    new Audio('/sound/horn.m4a').play()
+  }
+  
+  async function submitReservation() {
+    loading.value = true
+    try {
+      await api.post('/controller/seatreservation', form)
+      router.push({ name: 'payment' })
+    } finally {
+      loading.value = false
     }
-
-    rows.push({ left, right })
   }
 
-  seatRows.value = rows
-}
+  const formattedDeparture = computed(() => {
+  if (!form.departure) return ''
 
-/* ---------------- UI LOGIC ---------------- */
-function seatClass(seat) {
-  if (seat.booked) return 'soldM'
-  if (selectedSeats.value.includes(seat.id)) return 'selected'
-  return 'available'
-}
-
-function toggleSeat(seat) {
-  if (seat.booked) return
-  const index = selectedSeats.value.indexOf(seat.id)
-  index > -1
-    ? selectedSeats.value.splice(index, 1)
-    : selectedSeats.value.push(seat.id)
-}
-
-function playHorn() {
-  new Audio('/sound/horn.m4a').play()
-}
-
-/* ---------------- SUBMIT ---------------- */
-
-const submitReservation = async () => {
-    loading.value = true;
-    errors.value = {};
-  
-    try {
-      await api.post("/controller/seatreservation", form.value);
-      router.push({ name: "payment" });
-    } catch (e) {
-      if (e.response?.status === 422) {
-        errors.value = e.response.data.errors;
-      }
-    } finally {
-      loading.value = false;
-    }
-  };
-
-/* ---------------- MOUNT ---------------- */
-onMounted(() => {
-  const id = new URLSearchParams(window.location.search).get('schedule_id')
-  if (id) fetchSchedule(id)
+  // যদি শুধু time আসে (HH:mm:ss)
+  const time = new Date(`1970-01-01T${form.departure}`)
+  return time.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  })
 })
-</script>
+  
+  onMounted(() => {
+    const id = new URLSearchParams(window.location.search).get('schedule_id')
+    if (id) fetchSchedule(id)
+  })
+  </script>
+  
   
   
   <style scoped>
