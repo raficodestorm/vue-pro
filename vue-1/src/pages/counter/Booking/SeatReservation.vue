@@ -12,18 +12,16 @@
         </div>
 
         <div class="bus-container" v-if="scheduleLoaded">
-          <!-- Front -->
           <div class="bus-front">
             <div class="door">Door</div>
             <div class="driver" @click="playHorn" style="cursor:pointer;">
               <svg xmlns="http://www.w3.org/2000/svg" height="35px" viewBox="0 -960 960 960" width="35px">
-                <path
-                  d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z" />
-              </svg>
+              <path
+                d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-40-84v-120q-60-12-102-54t-54-102H164q12 109 89.5 185T440-164Zm80 0q109-12 186.5-89.5T796-440H676q-12 60-54 102t-102 54v120ZM164-520h116l120-120h160l120 120h116q-15-121-105-200.5T480-800q-121 0-211 79.5T164-520Z" />
+            </svg>
             </div>
           </div>
 
-          <!-- Seats -->
           <div class="seats">
             <div v-for="(row, rowIndex) in seatRows" :key="rowIndex" class="seat-row">
               <div
@@ -119,114 +117,143 @@
   </div>
 </template>
 
-
 <script setup>
-  import { ref, reactive, computed, onMounted, watch } from 'vue'
-  import { useRouter } from 'vue-router'
-  import api from '../../../api/axios.js'
-  
-  const router = useRouter()
-  
-  const schedule = reactive({})
-  const seatRows = ref([])
-  const selectedSeats = ref([])
-  const bookedSeats = ref([])
-  const scheduleLoaded = ref(false)
-  const loading = ref(false)
-  const errors = ref({})
-  
-  const form = reactive({
-    schedule_id: "",
-    bus_type: "",
-    coach_no: "",
-    route: "",
-    seat_price: "",
-    departure: "",
-    boarding: "",
-    dropping: "",
-    selected_seats: "",
-    total: "",
-    name: "",
-    mobile: "",
-  })
-  
-  const totalAmount = computed(() =>
-    selectedSeats.value.length * (schedule.price || 0)
-  )
-  
-  watch(selectedSeats, () => {
-    form.selected_seats = selectedSeats.value.join(', ')
-    form.total = totalAmount.value
-  })
-  
-  async function fetchSchedule(schedule_id) {
+import { ref, reactive, computed, onMounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import api from '../../../api/axios.js'
+
+const route = useRoute()
+const router = useRouter()
+
+const schedule = ref({})
+const seatRows = ref([])
+const selectedSeats = ref([])
+const bookedSeats = ref([])
+const scheduleLoaded = ref(false)
+const loading = ref(false)
+
+const form = reactive({
+  schedule_id: "",
+  bus_type: "",
+  coach_no: "",
+  route: "",
+  seat_price: 0,
+  departure: "",
+  boarding: "",
+  dropping: "",
+  selected_seats: "",
+  total: 0,
+  name: "",
+  mobile: "",
+})
+
+const totalAmount = computed(() => {
+  return selectedSeats.value.length * Number(form.seat_price)
+})
+
+watch(selectedSeats, (newSeats) => {
+  form.selected_seats = newSeats.join(', ')
+  form.total = totalAmount.value
+}, { deep: true })
+
+
+async function fetchSchedule(schedule_id) {
+  try {
     const res = await api.get(`counter/schedules/${schedule_id}`)
     const data = res.data.data
-  
-    Object.assign(schedule, data.schedule)
-    bookedSeats.value = data.bookedSeats || []
-  
-    form.schedule_id = schedule.id
-    form.bus_type = schedule.bus_type
-    form.coach_no = schedule.coach_no
-    form.route = `${schedule.start_location} → ${schedule.end_location}`
-    form.seat_price = schedule.price
-    form.departure = schedule.set_time
-  
-    generateSeats(data.seatLayout, data.seatCapacity)
+
+    schedule.value = data.schedule
+    bookedSeats.value = data.bookedSeats ?? []
+
+    form.schedule_id = schedule.value.id
+    form.bus_type = schedule.value.bus_type
+    form.coach_no = schedule.value.coach_no
+    form.route = `${schedule.value.start_location} → ${schedule.value.end_location}`
+    form.seat_price = Number(schedule.value.price)
+    form.departure = schedule.value.set_time
+
+    generateSeats(
+      data.seatLayout || '2:2',
+      data.seatCapacity || 40
+    )
+
     scheduleLoaded.value = true
+  } catch (e) {
+    console.error('Failed to load schedule', e)
   }
-  
-  function generateSeats(layout, capacity) {
-    const [L, R] = layout.split(':').map(Number)
-    const rows = Math.ceil(capacity / (L + R))
-    let seatNo = 1
-    seatRows.value = []
-  
-    for (let r = 0; r < rows; r++) {
-      const rowLetter = String.fromCharCode(65 + r)
-      seatRows.value.push({
-        left: Array.from({ length: L }, () => makeSeat(rowLetter, seatNo++)),
-        right: Array.from({ length: R }, () => makeSeat(rowLetter, seatNo++)),
-      })
-    }
+}
+
+function generateSeats(layout, capacity) {
+  const [L, R] = layout.split(':').map(Number) // e.g., "2:2" → L=2, R=2
+  const totalPerRow = L + R
+  const rows = Math.ceil(capacity / totalPerRow)
+  seatRows.value = []
+
+  for (let r = 0; r < rows; r++) {
+    const rowLetter = String.fromCharCode(65 + r) // A, B, C...
+    let seatNo = 1 // reset seat number for each row
+
+    seatRows.value.push({
+      left: Array.from({ length: L }, () => makeSeat(rowLetter, seatNo++)),
+      right: Array.from({ length: R }, () => makeSeat(rowLetter, seatNo++)),
+    })
   }
-  
-  function makeSeat(row, no) {
-    const id = `${row}${no}`
-    return { id, booked: bookedSeats.value.includes(id) }
+}
+
+function makeSeat(row, no) {
+  const id = `${row}${no}`
+  return {
+    id,
+    booked: bookedSeats.value.includes(id),
   }
-  
-  function seatClass(seat) {
-    if (seat.booked) return 'soldM'
-    if (selectedSeats.value.includes(seat.id)) return 'selected'
-    return 'available'
+}
+
+
+function seatClass(seat) {
+  if (seat.booked) return 'soldM'
+  if (selectedSeats.value.includes(seat.id)) return 'selected'
+  return 'available'
+}
+
+function toggleSeat(seat) {
+  if (seat.booked) return
+
+  const index = selectedSeats.value.indexOf(seat.id)
+  if (index > -1) {
+    selectedSeats.value.splice(index, 1)
+  } else {
+    selectedSeats.value.push(seat.id)
   }
-  
-  function toggleSeat(seat) {
-    if (seat.booked) return
-    const i = selectedSeats.value.indexOf(seat.id)
-    i > -1 ? selectedSeats.value.splice(i, 1) : selectedSeats.value.push(seat.id)
-  }
-  
-  function playHorn() {
-    new Audio('/sound/horn.m4a').play()
-  }
-  
-  async function submitReservation() {
-    loading.value = true
-    try {
-      await api.post('/controller/seatreservation', form)
-      router.push({ name: 'payment' })
-    } finally {
-      loading.value = false
-    }
+}
+
+function playHorn() {
+  new Audio('/sound/horn.m4a').play()
+}
+
+async function submitReservation() {
+  if (!selectedSeats.value.length) {
+    alert('Please select at least one seat')
+    return
   }
 
-  const formattedDeparture = computed(() => {
+  loading.value = true
+  try {
+    const res = await api.post('/counter/seatreservation', form)
+
+    const reservationId = res.data.reservation_id
+
+    router.push(`/counter/counterpayment/${res.data.reservation_id}`)
+  } catch (e) {
+    console.error(e)
+    alert('Reservation failed')
+  } finally {
+    loading.value = false
+  }
+}
+
+
+const formattedDeparture = computed(() => {
   if (!form.departure) return ''
-
-  // যদি শুধু time আসে (HH:mm:ss)
   const time = new Date(`1970-01-01T${form.departure}`)
   return time.toLocaleTimeString('en-US', {
     hour: '2-digit',
@@ -234,12 +261,18 @@
     hour12: true,
   })
 })
-  
-  onMounted(() => {
-    const id = new URLSearchParams(window.location.search).get('schedule_id')
-    if (id) fetchSchedule(id)
-  })
-  </script>
+
+onMounted(() => {
+  const id = route.query.schedule_id
+  if (id) {
+    fetchSchedule(id)
+  } else {
+    console.error('schedule_id missing')
+  }
+})
+</script>
+
+
   
   
   
@@ -481,6 +514,7 @@
     width: 100%;
     margin-bottom: 10px;
     padding: 8px;
+    color: black;
     border-radius: 5px;
     background-color: var(--bg-color);
     border: .5px solid var(--light-hover);
@@ -527,6 +561,7 @@
 
   .inline {
     display: inline-block !important;
+    margin-right: 5px;
   }
 
   .hidein {
@@ -535,6 +570,7 @@
     width: 50% !important;
     margin: 0 !important;
     padding: 0 !important;
+    color: black;
   }
   </style>
   

@@ -4,12 +4,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\Admin\LocationController;
+use App\Http\Controllers\Api\Admin\BusController;
 use App\Http\Controllers\Api\Admin\RouteController;
 use App\Http\Controllers\Api\Admin\BustypeController;
-use App\Http\Controllers\Api\Admin\BusController;
-use App\Http\Controllers\Api\Controller\ScheduleController;
+use App\Http\Controllers\Api\Admin\LocationController;
 use App\Http\Controllers\Api\Counter\BusSearchController;
+use App\Http\Controllers\Api\Controller\ScheduleController;
+use App\Http\Controllers\Api\Counter\SeatReservationController;
 
 // =========================
 // Public Routes
@@ -92,8 +93,11 @@ Route::middleware(['auth:sanctum', 'role:counter'])->group(function () {
     Route::get('counter/search-bus', [BusSearchController::class, 'search']);
     Route::get('counter/locationfetch', [LocationController::class, 'locationfetch']);
     Route::get('counter/schedules/{id}', [ScheduleController::class, 'ReservationData']);
-
     Route::get('counter/seatreservatio', [ScheduleController::class, 'ReservationData']);
+
+    Route::get('counter/schedule/{id}', [SeatReservationController::class, 'showSchedule']);
+    Route::post('counter/seatreservation', [SeatReservationController::class, 'store']);
+    Route::get('counter/payment/{id}', [SeatReservationController::class, 'paymentPage'])->name('payment.page');
 });
 
 // =========================
