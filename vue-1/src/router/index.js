@@ -34,6 +34,7 @@ import SearchBus from "../pages/counter/Booking/SearchBus.vue";
 import BusResult from "../pages/counter/Booking/BusResult.vue";
 import SeatReservation from "../pages/counter/Booking/SeatReservation.vue";
 import Payment from "../pages/counter/Booking/Payment.vue";
+import Ticket from "../pages/counter/Booking/Ticket.vue";
 
 // ROUTES
 const routes = [
@@ -77,6 +78,7 @@ const routes = [
       { path: "busResult", name: "busResult", component: BusResult },
       { path: "SeatReservation", name: "SeatReservation", component: SeatReservation },
       { path: "counterpayment/:id", name: "counterpayment", component: Payment },
+      { path: "ticket/:id", name: "counterticket", component: Ticket },
       
     ],
   },

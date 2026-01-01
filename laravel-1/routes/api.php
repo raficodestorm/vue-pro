@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\Admin\BustypeController;
 use App\Http\Controllers\Api\Admin\LocationController;
 use App\Http\Controllers\Api\Counter\BusSearchController;
 use App\Http\Controllers\Api\Controller\ScheduleController;
+use App\Http\Controllers\Api\Counter\CounterPaymentController;
 use App\Http\Controllers\Api\Counter\SeatReservationController;
 
 // =========================
@@ -98,6 +99,10 @@ Route::middleware(['auth:sanctum', 'role:counter'])->group(function () {
     Route::get('counter/schedule/{id}', [SeatReservationController::class, 'showSchedule']);
     Route::post('counter/seatreservation', [SeatReservationController::class, 'store']);
     Route::get('counter/payment/{id}', [SeatReservationController::class, 'paymentPage'])->name('payment.page');
+    Route::post('counter/pay/{id}', [CounterPaymentController::class, 'payNow']);
+    Route::get('counter/ticket/{id}', [CounterPaymentController::class, 'ticket']);
+
+
 });
 
 // =========================
