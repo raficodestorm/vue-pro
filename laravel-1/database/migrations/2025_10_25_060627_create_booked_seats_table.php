@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('reservation_id')->references('id')->on('seat_reservations')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('counter_id')->nullable()->constrained('counters');
+            $table->foreignId('counter_id')->nullable()->constrained('users');
             $table->foreignId('schedule_id')->constrained('schedules');
             $table->string('coach_no');
             $table->string('booked_seats');
